@@ -37,7 +37,7 @@ models:
         +schema: "silver"
     
     common:
-      adventureworks_sale:
+      adventureworks:
         +schema: "sale_dwh"
 
     # gold:

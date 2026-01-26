@@ -70,3 +70,30 @@ sources:
       - name: store
         meta:
           external_location: "read_parquet('s3://lakehouse/landing/sales/sales_store.parquet')"
+
+      - name: currency_rate
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_currencyrate.parquet')"
+
+      - name: country_region_currency
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_countryregioncurrency.parquet')"
+
+      - name: sale_resaon_header
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_salesorderheadersalesreason.parquet')"
+
+      - name: sale_resaon_details
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_salesreason.parquet')"
+
+      # purchasing schema
+      - name: ship_method
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/purchasing/purchasing_shipmethod.parquet')"
+
+
+
+
+
+          

@@ -7,27 +7,52 @@
   ) 
 }}
 
-with base as (
+with address as (
     select * 
     from {{ ref('base_adventureworks_address') }}
 )
 
-, cleaned as (
-    select
-        address_id,
-        state_province_id,
-        
-        -- Clean string fields
-        trim(address_line_1)                    as address_line_1,
-        nullif(trim(address_line_2), '')        as address_line_2,
-        trim(city)                              as city,
-        trim(postal_code)                       as postal_code,
-        
-        -- Geographic data
-        geo_longitude,
-        geo_latitude,
-        
-    from base
+, state_province as (
+    select *
+    from {{ ref('base_adventureworks_state_province') }}
 )
 
-select * from cleaned
+, country as (
+    select *
+    from {{ ref('base_adventureworks_country') }}
+)
+
+, joined as (
+    select
+        a.address_id,
+        a.state_province_id,
+        
+        -- Address fields
+        trim(a.address_line_1)                      as address_line_1,
+        nullif(trim(a.address_line_2), '')          as address_line_2,
+        trim(a.city)                                as city,
+        trim(a.postal_code)                         as postal_code,
+        
+        -- Geographic data from address
+        a.geo_longitude,
+        a.geo_latitude,
+        
+        -- State/Province info
+        sp.state_province_code,
+        sp.state_province_name,
+        sp.territory_id,
+        sp.is_only_state_province,
+        
+        -- Country info
+        sp.country_region_code,
+        c.name as country_name,
+
+        
+    from address a
+    left join state_province sp
+        on a.state_province_id = sp.state_province_id
+    left join country c
+        on sp.country_region_code = c.country_region_code
+)
+
+select * from joined

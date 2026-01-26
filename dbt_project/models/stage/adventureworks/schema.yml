@@ -1,512 +1,101 @@
 version: 2
 
 models:
-  # stg_adventureworks_address model
-  - name: stg_adventureworks_address
-    description: "Thông tin địa chỉ bao gồm tọa độ địa lý."
-    columns:
-      - name: address_id
-        description: "Khóa chính của bảng địa chỉ."
-        tests:
-          - unique
-          - not_null
-
-      - name: state_province_id
-        description: "Khóa ngoại đến bảng state province."
-        tests:
-          - not_null
-
-      - name: address_line_1
-        description: "Địa chỉ dòng 1 ."
-        tests:
-          - not_null
-
-      - name: address_line_2
-        description: "Địa chỉ dòng 2."
-
-      - name: city
-        description: "Tên thành phố ."
-        tests:
-          - not_null
-
-      - name: postal_code
-        description: "Mã bưu điện ."
-        tests:
-          - not_null
-
-      - name: geo_longitude
-        description: "Kinh độ từ spatial location."
-
-      - name: geo_latitude
-        description: "Vĩ độ từ spatial location."
-
-  # stg_adventureworks_country model
-  - name: stg_adventureworks_country
-    description: "Danh sách quốc gia và khu vực."
-    columns:
-      - name: country_region_code
-        description: "Mã quốc gia/khu vực (khóa chính)."
-        tests:
-          - unique
-          - not_null
-
-      - name: country_name
-        description: "Tên quốc gia/khu vực ."
-        tests:
-          - not_null
-
-  # stg_adventureworks_currency model
-  - name: stg_adventureworks_currency
-    description: "Danh sách các loại tiền tệ."
-    columns:
-      - name: currency_code
-        description: "Mã tiền tệ (khóa chính)."
-        tests:
-          - unique
-          - not_null
-
-      - name: currency_name
-        description: "Tên tiền tệ  "
-        tests:
-          - not_null
-
-  # stg_adventureworks_customer model
-  - name: stg_adventureworks_customer
-    description: "Thông tin khách hàng cá nhân và doanh nghiệp."
-    columns:
-      - name: customer_id
-        description: "Khóa chính của bảng khách hàng."
-        tests:
-          - unique
-          - not_null
-
-      - name: person_id
-        description: "Khóa ngoại đến bảng person (cho khách hàng cá nhân)."
-
-      - name: store_id
-        description: "Khóa ngoại đến bảng store (cho khách hàng doanh nghiệp)."
-
-      - name: territory_id
-        description: "Khóa ngoại đến sales territory."
-
-      - name: account_number
-        description: "Số tài khoản khách hàng."
-
-  # stg_adventureworks_employee model
-  - name: stg_adventureworks_employee
-    description: "Thông tin nhân viên và cấu trúc tổ chức."
-    columns:
-      - name: employee_id
-        description: "Khóa chính của bảng nhân viên."
-        tests:
-          - unique
-          - not_null
-
-      - name: national_id_number
-        description: "Số chứng minh nhân dân/căn cước  "
-        tests:
-          - not_null
-
-      - name: organization_node
-        description: "Node phân cấp tổ chức  "
-        tests:
-          - not_null
-
-      - name: organization_level
-        description: "Cấp độ trong tổ chức."
-
-      - name: job_title
-        description: "Chức danh công việc  "
-        tests:
-          - not_null
-
-      - name: birthday
-        description: "Ngày sinh."
-        tests:
-          - not_null
-
-      - name: hire_date
-        description: "Ngày tuyển dụng."
-        tests:
-          - not_null
-
-      - name: is_salaried
-        description: "Nhân viên hưởng lương tháng hay theo giờ."
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_active
-        description: "Trạng thái nhân viên còn làm việc hay không."
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-  # stg_adventureworks_person model
-  - name: stg_adventureworks_person
-    description: "Thông tin cá nhân của mọi người trong hệ thống."
-    columns:
-      - name: business_entity_id
-        description: "Khóa chính của bảng person."
-        tests:
-          - unique
-          - not_null
-
-      - name: person_type
-        description: "Loại người (EM, IN, SC, etc.)."
-        tests:
-          - not_null
-
-      - name: first_name
-        description: "Tên."
-        tests:
-          - not_null
-
-      - name: last_name
-        description: "Họ."
-        tests:
-          - not_null
-
-      - name: title
-        description: "Danh xưng"
-
-      - name: middle_name
-        description: "Tên đệm."
-
-      - name: suffix
-        description: "Hậu tố (Jr., Sr., etc.)."
-
-      - name: email_promotion
-        description: "Tùy chọn nhận email quảng cáo."
-
-      - name: total_purchase_ytd
-        description: "Tổng mua hàng trong năm."
-
-  # stg_adventureworks_product_category model
-  - name: stg_adventureworks_product_category
-    description: "Danh mục sản phẩm cấp cao."
-    columns:
-      - name: product_category_id
-        description: "Khóa chính của bảng product category."
-        tests:
-          - unique
-          - not_null
-
-      - name: product_category_name
-        description: "Tên danh mục sản phẩm  "
-        tests:
-          - not_null
-
-  # stg_adventureworks_product_subcategory model
-  - name: stg_adventureworks_product_subcategory
-    description: "Danh mục sản phẩm chi tiết."
-    columns:
-      - name: product_subcategory_id
-        description: "Khóa chính của bảng product subcategory."
-        tests:
-          - unique
-          - not_null
-
-      - name: product_category_id
-        description: "Khóa ngoại đến product category."
-        tests:
-          - not_null
-
-      - name: product_subcategory_name
-        description: "Tên danh mục sản phẩm chi tiết  "
-        tests:
-          - not_null
-
-  # stg_adventureworks_product model
-  - name: stg_adventureworks_product
-    description: "Thông tin chi tiết về sản phẩm."
-    columns:
-      - name: product_id
-        description: "Khóa chính của bảng product."
-        tests:
-          - unique
-          - not_null
-
-      - name: product_name
-        description: "Tên sản phẩm  "
-        tests:
-          - not_null
-
-      - name: product_number
-        description: "Mã số sản phẩm duy nhất  "
-        tests:
-          - not_null
-          - unique
-
-      - name: is_manufactured_in_house
-        description: "Sản phẩm được sản xuất nội bộ."
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: is_finished_good
-        description: "Sản phẩm hoàn thiện hay linh kiện."
-        tests:
-          - not_null
-          - accepted_values:
-              values: [true, false]
-
-      - name: color
-        description: "Màu sắc sản phẩm (đã trim và nullif)."
-
-      - name: standard_cost
-        description: "Chi phí tiêu chuẩn."
-        tests:
-          - not_null
-
-      - name: list_price
-        description: "Giá niêm yết."
-        tests:
-          - not_null
-
-      - name: product_subcategory_id
-        description: "Khóa ngoại đến product subcategory."
-
-      - name: sell_start_date
-        description: "Ngày bắt đầu bán."
-
-      - name: discontinued_date
-        description: "Ngày ngừng sản xuất."
-
-  # stg_adventureworks_sales_order_details model
-  - name: stg_adventureworks_sales_order_details
-    description: "Chi tiết từng dòng sản phẩm trong đơn hàng."
+  # Staging Models
+  - name: stg_adventureworks_sales
+    description: "Staging table for sales orders combining header and details"
     columns:
       - name: sales_order_detail_id
-        description: "Khóa chính của bảng sales order detail."
+        description: "Primary key for order line item"
         tests:
           - unique
           - not_null
-
       - name: sales_order_id
-        description: "Khóa ngoại đến sales order header."
+        description: "Order header identifier"
         tests:
           - not_null
-
-      - name: product_id
-        description: "Khóa ngoại đến product."
-        tests:
-          - not_null
-
-      - name: special_offer_id
-        description: "Khóa ngoại đến special offer."
-        tests:
-          - not_null
-
-      - name: order_qty
-        description: "Số lượng đặt hàng."
-        tests:
-          - not_null
-
-      - name: unit_price
-        description: "Đơn giá."
-        tests:
-          - not_null
-
-      - name: unit_price_discount
-        description: "Giảm giá đơn vị."
-        tests:
-          - not_null
-
-      - name: line_total
-        description: "Tổng tiền dòng sản phẩm."
-        tests:
-          - not_null
-
-  # stg_adventureworks_sales_order_header model
-  - name: stg_adventureworks_sales_order_header
-    description: "Thông tin tổng quan về đơn hàng bán."
-    columns:
-      - name: sales_order_id
-        description: "Khóa chính của bảng sales order header."
-        tests:
-          - unique
-          - not_null
-
       - name: customer_id
-        description: "Khóa ngoại đến customer."
+        description: "Customer identifier"
         tests:
           - not_null
-
+      - name: product_id
+        description: "Product identifier"
+        tests:
+          - not_null
       - name: order_date
-        description: "Ngày đặt hàng."
+        description: "Date order was placed"
         tests:
           - not_null
 
-      - name: status_code
-        description: "Trạng thái đơn hàng."
+  - name: stg_adventureworks_customer
+    description: "Staging table for customers with person and store information"
+    columns:
+      - name: customer_id
+        description: "Primary key for customers"
         tests:
+          - unique
           - not_null
-
-      - name: is_online_order
-        description: "Đơn hàng trực tuyến hay không."
+      - name: is_online_customer
+        description: "Flag indicating if customer is online (true) or reseller (false)"
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
 
-      - name: sub_total
-        description: "Tổng tiền trước thuế và phí."
+  - name: stg_adventureworks_product
+    description: "Staging table for products with category hierarchy"
+    columns:
+      - name: product_id
+        description: "Primary key for products"
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: "Product name"
         tests:
           - not_null
 
-      - name: tax_amount
-        description: "Số tiền thuế."
+  - name: stg_adventureworks_employee
+    description: "Staging table for employees"
+    columns:
+      - name: employee_id
+        description: "Primary key for employees"
         tests:
+          - unique
           - not_null
 
-      - name: freight_amount
-        description: "Phí vận chuyển."
+  - name: stg_adventureworks_address
+    description: "Staging table for addresses"
+    columns:
+      - name: address_id
+        description: "Primary key for addresses"
         tests:
+          - unique
           - not_null
 
-      - name: total_due
-        description: "Tổng tiền phải trả (calculated: sub_total + tax_amount + freight_amount)."
-        tests:
-          - not_null
-
-  # stg_adventureworks_sales_territory model
   - name: stg_adventureworks_sales_territory
-    description: "Vùng bán hàng địa lý và chỉ số doanh số."
+    description: "Staging table for sales territories"
     columns:
       - name: territory_id
-        description: "Khóa chính của bảng sales territory."
+        description: "Primary key for territories"
         tests:
           - unique
           - not_null
 
-      - name: territory_name
-        description: "Tên vùng bán hàng  "
-        tests:
-          - not_null
-
-      - name: country_region_code
-        description: "Mã quốc gia/khu vực  "
-        tests:
-          - not_null
-
-      - name: territory_group
-        description: "Nhóm vùng  "
-        tests:
-          - not_null
-
-      - name: sales_ytd
-        description: "Doanh số trong năm."
-
-      - name: sales_last_year
-        description: "Doanh số năm trước."
-
-  # stg_adventureworks_special_offer model
-  - name: stg_adventureworks_special_offer
-    description: "Các chương trình khuyến mại và ưu đãi."
+  - name: stg_adventureworks_ship_method
+    description: "Staging table for shipping methods"
     columns:
-      - name: special_offer_id
-        description: "Khóa chính của bảng special offer."
+      - name: ship_method_id
+        description: "Primary key for ship methods"
         tests:
           - unique
           - not_null
 
-      - name: description
-        description: "Mô tả chương trình  "
-        tests:
-          - not_null
-
-      - name: offer_type
-        description: "Loại chương trình  "
-        tests:
-          - not_null
-
-      - name: offer_category
-        description: "Danh mục chương trình  "
-        tests:
-          - not_null
-
-      - name: discount_percentage
-        description: "Phần trăm giảm giá."
-        tests:
-          - not_null
-
-      - name: start_date
-        description: "Ngày bắt đầu."
-        tests:
-          - not_null
-
-      - name: end_date
-        description: "Ngày kết thúc."
-        tests:
-          - not_null
-
-  # stg_adventureworks_state_province model
-  - name: stg_adventureworks_state_province
-    description: "Thông tin bang, tỉnh, thành phố."
+  - name: stg_adventureworks_currency
+    description: "Staging table for currency rates"
     columns:
-      - name: state_province_id
-        description: "Khóa chính của bảng state province."
+      - name: currency_rate_id
+        description: "Primary key for currency rates"
         tests:
           - unique
           - not_null
-
-      - name: state_province_code
-        description: "Mã bang/tỉnh  "
-        tests:
-          - not_null
-
-      - name: country_region_code
-        description: "Mã quốc gia/khu vực  "
-        tests:
-          - not_null
-
-      - name: state_province_name
-        description: "Tên bang/tỉnh  "
-        tests:
-          - not_null
-
-      - name: is_only_state_province
-        description: "Bang/tỉnh duy nhất trong quốc gia."
-
-  # stg_adventureworks_store model
-  - name: stg_adventureworks_store
-    description: "Thông tin về các cửa hàng khách hàng."
-    columns:
-      - name: store_id
-        description: "Khóa chính của bảng store."
-        tests:
-          - unique
-          - not_null
-
-      - name: store_name
-        description: "Tên cửa hàng  "
-        tests:
-          - not_null
-
-      - name: sales_person_id
-        description: "Nhân viên bán hàng phụ trách."
-
-      - name: annual_sales
-        description: "Doanh số hàng năm "
-
-      - name: annual_revenue
-        description: "Doanh thu hàng năm "
-
-      - name: business_type
-        description: "Loại hình kinh doanh."
-
-      - name: year_opened
-        description: "Năm mở cửa"
-
-      - name: specialty
-        description: "Chuyên môn."
-
-      - name: square_feet
-        description: "Diện tích cửa hàng  "
-
-      - name: number_employees
-        description: "Số lượng nhân viên  "

@@ -4,6 +4,8 @@ from dagster_dbt import DbtCliResource, dbt_assets
 from typing import List, Optional
 from pydantic import Field
 from functools import cache
+import shutil
+import os
 
 from etl_pipeline.lib_custom.dbt.translator import CustomAdventureWorksTranslator
 from etl_pipeline.defs.dbt.resources import get_dbt_project
@@ -59,6 +61,20 @@ def get_dbt_models(
         context.log.info(f"Running dbt command: dbt {' '.join(dbt_build_args)}")
         
         yield from dbt.cli(dbt_build_args, context=context).stream().fetch_row_counts()
+        
+        # Auto-sync DuckDB for CloudBeaver after dbt run
+        try:
+            source_db = os.getenv("DUCKDB_PATH", "/opt/dagster/app/dbt_project/dbt.duckdb")
+            target_db = source_db.replace(".duckdb", "_readonly.duckdb")
+            
+            if os.path.exists(source_db):
+                shutil.copy2(source_db, target_db)
+                os.chmod(target_db, 0o666)  # rw-rw-rw- for CloudBeaver access
+                context.log.info(f"Synced DuckDB to CloudBeaver: {target_db}")
+            else:
+                context.log.warning(f"Source DuckDB not found: {source_db}")
+        except Exception as e:
+            context.log.error(f"Failed to sync DuckDB: {e}")
     
     return dbt_models
 

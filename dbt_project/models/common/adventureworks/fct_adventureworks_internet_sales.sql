@@ -3,19 +3,19 @@
     materialized = 'external',
     file_format = 'parquet',
     tags = ['adventureworks', 'dwh'],
-    location = 's3://lakehouse/warehouse/adventureworks/fct_adventureworks_reseller_sales.parquet'
+    location = 's3://lakehouse/warehouse/adventureworks/fct_adventureworks_internet_sales.parquet'
   ) 
 }}
 
 with sales as (
     select *
     from {{ ref('stg_adventureworks_sales') }}
-    where is_online_order = false
+    where is_online_order = true
 )
 
 , dim_customer as (
-    select dim_adventureworks_reseller_customer_sk, customer_id
-    from {{ ref('dim_adventureworks_reseller_customer') }}
+    select dim_adventureworks_internet_customer_sk, customer_id
+    from {{ ref('dim_adventureworks_internet_customer') }}
 )
 
 , dim_product as (
@@ -70,7 +70,7 @@ with sales as (
         coalesce(dd_ship.date_key, 19000101) as ship_date_key,
         
         -- Dimension foreign keys (surrogate keys)
-        coalesce(dc.dim_adventureworks_reseller_customer_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_reseller_customer_sk,
+        coalesce(dc.dim_adventureworks_internet_customer_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_internet_customer_sk,
         coalesce(dp.dim_adventureworks_product_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_product_sk,
         coalesce(de.dim_adventureworks_employee_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_employee_sk,
         coalesce(dt.dim_adventureworks_sales_territory_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_sales_territory_sk,
@@ -141,7 +141,7 @@ with sales as (
 , final as (
     select
         -- Primary key
-        {{ dbt_utils.generate_surrogate_key(['sales_order_detail_id']) }} as fct_adventureworks_reseller_sales_pk,
+        {{ dbt_utils.generate_surrogate_key(['sales_order_detail_id']) }} as fct_adventureworks_internet_sales_pk,
         
         *
     from joined

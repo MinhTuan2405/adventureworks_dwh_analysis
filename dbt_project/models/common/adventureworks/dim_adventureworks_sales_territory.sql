@@ -7,31 +7,34 @@
   ) 
 }}
 
-with base as (
-    select distinct
-        territory_id,
-        territory_name,
-        country_region_code,
-        territory_group
+with territory as (
+    select *
     from {{ ref('stg_adventureworks_sales_territory') }}
 )
 
-, add_key as (
+, final as (
     select
-        -- Surrogate Key
+        -- Surrogate key
         {{ dbt_utils.generate_surrogate_key(['territory_id']) }} as dim_adventureworks_sales_territory_sk,
         
-        -- Natural Key
+        -- Natural key
         territory_id,
         
         -- Attributes
         territory_name,
         country_region_code,
-        territory_group
+        country_name,
+        territory_group,
         
-    from base
+        -- Metrics
+        sales_ytd,
+        sales_last_year,
+        cost_ytd,
+        cost_last_year,
+        sales_growth,
+        cost_growth
+        
+    from territory
 )
 
--- final
-select *
-from add_key
+select * from final

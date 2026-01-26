@@ -2,31 +2,56 @@
   config(
     materialized = 'external',
     file_format = 'parquet',
-    tags = ['adventureworks', 'dwh'],
-    location = 's3://lakehouse/warehouse/adventureworks/dim_adventureworks_currency.parquet'
+    tags = ['adventureworks', 'dwh', 'dimension'],
+    location = 's3://lakehouse/gold/adventureworks/dim_adventureworks_currency.parquet'
   ) 
 }}
 
-with base as (
-    select distinct 
-        currency_code,
-        currency_name
-    from {{ ref('stg_adventureworks_store') }}
+with source as (
+    select * 
+    from {{ ref('stg_adventureworks_currency') }}
 )
 
-, add_key as (
+, final as (
     select
-        -- Surrogate Key
-        {{ dbt_utils.generate_surrogate_key(['currency_code']) }} as dim_adventureworks_currency_sk,
+        -- Surrogate key
+        {{ dbt_utils.generate_surrogate_key(['currency_rate_id']) }} as dim_adventureworks_currency_sk,
         
-        -- Natural Key
-        currency_code,
+        -- Natural key
+        currency_rate_id,
         
-        -- Attributes
-        currency_name
-    from base
+        -- Date
+        currency_rate_date,
+        
+        -- From currency attributes
+        from_currency_code,
+        from_currency_name,
+        
+        -- To currency attributes
+        to_currency_code,
+        to_currency_name,
+        
+        -- Rate attributes
+        average_rate,
+        end_of_day_rate
+
+    from source
 )
 
--- final
-select *
-from add_key
+-- Add unknown member
+, with_unknown as (
+    select * from final
+    union all
+    select
+        '-1' as dim_adventureworks_currency_sk,
+        -1 as currency_rate_id,
+        cast('1900-01-01' as date) as currency_rate_date,
+        'N/A' as from_currency_code,
+        'Unknown' as from_currency_name,
+        'N/A' as to_currency_code,
+        'Unknown' as to_currency_name,
+        0.0 as average_rate,
+        0.0 as end_of_day_rate
+)
+
+select * from with_unknown

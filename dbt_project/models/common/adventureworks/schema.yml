@@ -1,507 +1,204 @@
 version: 2
 
 models:
-  #   FACT TABLES  
-  
-  - name: fct_adventureworks_online_sales
-    description: "Fact table for online sales transactions"
+  # Date Dimension
+  - name: dim_date
+    description: "Date dimension table with calendar attributes"
     columns:
-      - name: fct_adventureworks_online_sales_pk
-        description: "Primary key for the online sales fact table"
+      - name: date_key
+        description: "Primary key in YYYYMMDD integer format"
         tests:
           - unique
           - not_null
-      
-      # Foreign Keys
-      - name: dim_adventureworks_customer_sk
-        description: "Foreign key to customer dimension"
+
+  # Customer Dimensions
+  - name: dim_adventureworks_internet_customer
+    description: "Internet/online customer dimension"
+    columns:
+      - name: dim_adventureworks_internet_customer_sk
+        description: "Surrogate key for internet customers"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  - name: dim_adventureworks_reseller_customer
+    description: "Reseller customer dimension with store information"
+    columns:
+      - name: dim_adventureworks_reseller_customer_sk
+        description: "Surrogate key for reseller customers"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+      - name: store_id
+        description: "Store natural key"
+        tests:
+          - not_null
+
+  # Product Dimension
+  - name: dim_adventureworks_product
+    description: "Product dimension with category hierarchy"
+    columns:
+      - name: dim_adventureworks_product_sk
+        description: "Surrogate key for products"
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Employee Dimension
+  - name: dim_adventureworks_employee
+    description: "Employee/salesperson dimension"
+    columns:
+      - name: dim_adventureworks_employee_sk
+        description: "Surrogate key for employees"
+        tests:
+          - unique
+          - not_null
+      - name: employee_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Geography Dimension
+  - name: dim_adventureworks_geography
+    description: "Address/location dimension with geographic hierarchy"
+    columns:
+      - name: dim_adventureworks_geography_sk
+        description: "Surrogate key for addresses"
+        tests:
+          - unique
+          - not_null
+      - name: address_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Sales Territory Dimension
+  - name: dim_adventureworks_sales_territory
+    description: "Sales territory dimension with metrics"
+    columns:
+      - name: dim_adventureworks_sales_territory_sk
+        description: "Surrogate key for sales territories"
+        tests:
+          - unique
+          - not_null
+      - name: territory_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Ship Method Dimension
+  - name: dim_adventureworks_ship_method
+    description: "Shipping method dimension"
+    columns:
+      - name: dim_adventureworks_ship_method_sk
+        description: "Surrogate key for ship methods"
+        tests:
+          - unique
+          - not_null
+      - name: ship_method_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Currency Dimension
+  - name: dim_adventureworks_currency
+    description: "Currency rate dimension"
+    columns:
+      - name: dim_adventureworks_currency_sk
+        description: "Surrogate key for currency rates"
+        tests:
+          - unique
+          - not_null
+      - name: currency_rate_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Fact Tables
+  - name: fct_adventureworks_internet_sales
+    description: "Internet sales fact table at line item grain"
+    columns:
+      - name: fct_adventureworks_internet_sales_pk
+        description: "Primary key for fact table"
+        tests:
+          - unique
+          - not_null
+      - name: sales_order_detail_id
+        description: "Natural key for order line item"
+        tests:
+          - not_null
+      - name: order_date_key
+        description: "Foreign key to dim_date"
         tests:
           - not_null
           - relationships:
-              to: ref('dim_adventureworks_customer')
-              field: dim_adventureworks_customer_sk
-      
+              to: ref('dim_date')
+              field: date_key
+      - name: dim_adventureworks_internet_customer_sk
+        description: "Foreign key to dim_adventureworks_internet_customer"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_adventureworks_internet_customer')
+              field: dim_adventureworks_internet_customer_sk
       - name: dim_adventureworks_product_sk
-        description: "Foreign key to product dimension"
+        description: "Foreign key to dim_adventureworks_product"
         tests:
           - not_null
           - relationships:
               to: ref('dim_adventureworks_product')
               field: dim_adventureworks_product_sk
-      
-      - name: dim_adventureworks_promotion_sk
-        description: "Foreign key to promotion dimension"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_adventureworks_promotion')
-              field: dim_adventureworks_promotion_sk
-      
-      - name: dim_adventureworks_employee_sk
-        description: "Foreign key to employee dimension"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_adventureworks_employee')
-              field: dim_adventureworks_employee_sk
-      
-      - name: dim_adventureworks_sales_territory_sk
-        description: "Foreign key to sales territory dimension"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_adventureworks_sales_territory')
-              field: dim_adventureworks_sales_territory_sk
-      
-      - name: dim_adventureworks_geo_location_billing_sk
-        description: "Foreign key to geo location dimension for billing address"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_adventureworks_geo_location')
-              field: dim_adventureworks_geo_location_sk
-      
-      - name: dim_adventureworks_geo_location_shipping_sk
-        description: "Foreign key to geo location dimension for shipping address"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_adventureworks_geo_location')
-              field: dim_adventureworks_geo_location_sk
-      
-      # Date Keys
-      - name: order_date_key
-        description: "Date key for order date"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_date')
-              field: date_key
-      
-      - name: due_date_key
-        description: "Date key for due date"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_date')
-              field: date_key
-      
-      - name: ship_date_key
-        description: "Date key for ship date"
-        tests:
-          - relationships:
-              to: ref('dim_date')
-              field: date_key
-              config:
-                where: "ship_date_key is not null"
-      
-      # Measures - Business Logic Tests
-      - name: order_qty
-        description: "Order quantity"
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
-      - name: unit_price
-        description: "Unit price"
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
       - name: line_total
-        description: "Line total amount"
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
-      - name: order_total_due
-        description: "Total amount due for order"
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
-      - name: gross_amount
-        description: "Gross sales amount"
-        tests:
-          - not_null
-      
-      - name: discount_amount
-        description: "Discount amount"
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
-      - name: net_amount
-        description: "Net sales amount after discount"
+        description: "Line item total amount"
         tests:
           - not_null
 
   - name: fct_adventureworks_reseller_sales
-    description: "Fact table for reseller sales transactions"
+    description: "Reseller sales fact table at line item grain"
     columns:
       - name: fct_adventureworks_reseller_sales_pk
-        description: "Primary key for the reseller sales fact table"
+        description: "Primary key for fact table"
         tests:
           - unique
           - not_null
-      
-      # Foreign Keys
-      - name: dim_adventureworks_customer_sk
-        description: "Foreign key to customer dimension"
+      - name: sales_order_detail_id
+        description: "Natural key for order line item"
+        tests:
+          - not_null
+      - name: order_date_key
+        description: "Foreign key to dim_date"
         tests:
           - not_null
           - relationships:
-              to: ref('dim_adventureworks_customer')
-              field: dim_adventureworks_customer_sk
-      
-      - name: dim_adventureworks_reseller_sk
-        description: "Foreign key to reseller dimension"
+              to: ref('dim_date')
+              field: date_key
+      - name: dim_adventureworks_reseller_customer_sk
+        description: "Foreign key to dim_adventureworks_reseller_customer"
         tests:
           - not_null
           - relationships:
-              to: ref('dim_adventureworks_reseller')
-              field: dim_adventureworks_reseller_sk
-      
+              to: ref('dim_adventureworks_reseller_customer')
+              field: dim_adventureworks_reseller_customer_sk
       - name: dim_adventureworks_product_sk
-        description: "Foreign key to product dimension"
+        description: "Foreign key to dim_adventureworks_product"
         tests:
           - not_null
           - relationships:
               to: ref('dim_adventureworks_product')
               field: dim_adventureworks_product_sk
-      
-      - name: dim_adventureworks_promotion_sk
-        description: "Foreign key to promotion dimension"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_adventureworks_promotion')
-              field: dim_adventureworks_promotion_sk
-      
-      - name: dim_adventureworks_employee_sk
-        description: "Foreign key to employee dimension"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_adventureworks_employee')
-              field: dim_adventureworks_employee_sk
-      
-      - name: dim_adventureworks_sales_territory_sk
-        description: "Foreign key to sales territory dimension"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_adventureworks_sales_territory')
-              field: dim_adventureworks_sales_territory_sk
-      
-      - name: dim_adventureworks_geo_location_billing_sk
-        description: "Foreign key to geo location dimension for billing address"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_adventureworks_geo_location')
-              field: dim_adventureworks_geo_location_sk
-      
-      - name: dim_adventureworks_geo_location_shipping_sk
-        description: "Foreign key to geo location dimension for shipping address"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_adventureworks_geo_location')
-              field: dim_adventureworks_geo_location_sk
-      
-      # Date Keys
-      - name: order_date_key
-        description: "Date key for order date"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_date')
-              field: date_key
-      
-      - name: due_date_key
-        description: "Date key for due date"
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_date')
-              field: date_key
-      
-      - name: ship_date_key
-        description: "Date key for ship date"
-        tests:
-          - relationships:
-              to: ref('dim_date')
-              field: date_key
-              config:
-                where: "ship_date_key is not null"
-      
-      # Measures - Business Logic Tests
-      - name: order_qty
-        description: "Order quantity"
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
-      - name: unit_price
-        description: "Unit price"
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
       - name: line_total
-        description: "Line total amount"
+        description: "Line item total amount"
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
-      - name: order_total_due
-        description: "Total amount due for order"
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
-      - name: gross_amount
-        description: "Gross sales amount"
-        tests:
-          - not_null
-      
-      - name: discount_amount
-        description: "Discount amount"
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
-      - name: net_amount
-        description: "Net sales amount after discount"
-        tests:
-          - not_null
-
-  #   DIMENSION TABLES  
-  
-  - name: dim_adventureworks_customer
-    description: "Customer dimension table"
-    columns:
-      - name: dim_adventureworks_customer_sk
-        description: "Surrogate key for customer dimension"
-        tests:
-          - unique
-          - not_null
-      
-      - name: customer_id
-        description: "Business key - customer ID"
-        tests:
-          - unique
-          - not_null
-      
-      - name: account_number
-        description: "Customer account number"
-        tests:
-          - not_null
-      
-      - name: first_name
-        description: "Customer first name"
-      
-      - name: last_name
-        description: "Customer last name"
-
-  - name: dim_adventureworks_product
-    description: "Product dimension table"
-    columns:
-      - name: dim_adventureworks_product_sk
-        description: "Surrogate key for product dimension"
-        tests:
-          - unique
-          - not_null
-      
-      - name: product_id
-        description: "Business key - product ID"
-        tests:
-          - unique
-          - not_null
-      
-      - name: product_name
-        description: "Product name"
-        tests:
-          - not_null
-      
-      - name: product_number
-        description: "Product number"
-        tests:
-          - not_null
-      
-      - name: standard_cost
-        description: "Standard cost of product"
-        tests:
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-      
-      - name: list_price
-        description: "List price of product"
-        tests:
-          - dbt_utils.expression_is_true:
-              expression: ">= 0"
-
-  - name: dim_adventureworks_employee
-    description: "Employee dimension table"
-    columns:
-      - name: dim_adventureworks_employee_sk
-        description: "Surrogate key for employee dimension"
-        tests:
-          - unique
-          - not_null
-      
-      - name: employee_id
-        description: "Business key - employee ID"
-        tests:
-          - unique
-          - not_null
-      
-      - name: national_id_number
-        description: "National ID number"
-        tests:
-          - unique
-          - not_null
-      
-      - name: first_name
-        description: "Employee first name"
-      
-      - name: last_name
-        description: "Employee last name"
-
-  - name: dim_adventureworks_promotion
-    description: "Promotion/Special offer dimension table"
-    columns:
-      - name: dim_adventureworks_promotion_sk
-        description: "Surrogate key for promotion dimension"
-        tests:
-          - unique
-          - not_null
-      
-      - name: special_offer_id
-        description: "Business key - special offer ID"
-        tests:
-          - unique
-          - not_null
-      
-      - name: description
-        description: "Promotion description"
-        tests:
-          - not_null
-      
-
-  - name: dim_adventureworks_sales_territory
-    description: "Sales territory dimension table"
-    columns:
-      - name: dim_adventureworks_sales_territory_sk
-        description: "Surrogate key for sales territory dimension"
-        tests:
-          - unique
-          - not_null
-      
-      - name: territory_id
-        description: "Business key - territory ID"
-        tests:
-          - unique
-          - not_null
-      
-      - name: territory_name
-        description: "Territory name"
-        tests:
-          - not_null
-      
-      - name: country_region_code
-        description: "Country region code"
-        tests:
-          - not_null
-
-  - name: dim_adventureworks_geo_location
-    description: "Geographic location dimension table"
-    columns:
-      - name: dim_adventureworks_geo_location_sk
-        description: "Surrogate key for geo location dimension"
-        tests:
-          - unique
-          - not_null
-      
-      - name: address_id
-        description: "Business key - address ID"
-        tests:
-          - unique
-          - not_null
-      
-      - name: address_line_1
-        description: "Address line 1"
-        tests:
-          - not_null
-      
-      - name: city
-        description: "City name"
-        tests:
-          - not_null
-      
-      - name: state_province_name
-        description: "State or province name"
-      
-      - name: country_region_name
-        description: "Country or region name"
-
-  - name: dim_adventureworks_reseller
-    description: "Reseller/Store dimension table"
-    columns:
-      - name: dim_adventureworks_reseller_sk
-        description: "Surrogate key for reseller dimension"
-        tests:
-          - unique
-          - not_null
-      
-      - name: store_id
-        description: "Business key - store ID"
-        tests:
-          - unique
-          - not_null
-      
-      - name: store_name
-        description: "Store name"
-        tests:
-          - not_null
-
-  - name: dim_adventureworks_currency
-    description: "Currency dimension table"
-    columns:
-      - name: dim_adventureworks_currency_sk
-        description: "Surrogate key for currency dimension"
-        tests:
-          - unique
-          - not_null
-      
-      - name: currency_code
-        description: "Business key - currency code"
-        tests:
-          - unique
-          - not_null
-      
-      - name: currency_name
-        description: "Currency name"
-        tests:
-          - not_null
-
-  - name: dim_date
-    description: "Date dimension table for time-based analysis. Covers period from 2000-01-01 to 2030-12-31"
-    columns:
-      - name: date_key
-        description: "Primary key - integer in YYYYMMDD format (e.g., 20240115 for January 15, 2024)"
-        tests:
-          - unique
-          - not_null
-

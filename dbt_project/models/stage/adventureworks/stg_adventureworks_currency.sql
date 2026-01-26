@@ -7,17 +7,39 @@
   ) 
 }}
 
-with base as (
+with currency_rate as (
     select * 
+    from {{ ref('base_adventureworks_currency_rate') }}
+)
+
+, currency as (
+    select *
     from {{ ref('base_adventureworks_currency') }}
 )
 
-, cleaned as (
+, joined as (
     select
-        trim(currency_code)                     as currency_code,
-        trim(name)                              as currency_name,
+        cr.currency_rate_id,
+        cr.currency_rate_date,
         
-    from base
+        -- From currency info
+        cr.from_currency_code,
+        trim(fc.name)                           as from_currency_name,
+        
+        -- To currency info
+        cr.to_currency_code,
+        trim(tc.name)                           as to_currency_name,
+        
+        -- Rate info
+        cr.average_rate,
+        cr.end_of_day_rate,
+        
+        
+    from currency_rate cr
+    left join currency fc
+        on cr.from_currency_code = fc.currency_code
+    left join currency tc
+        on cr.to_currency_code = tc.currency_code
 )
 
-select * from cleaned
+select * from joined
