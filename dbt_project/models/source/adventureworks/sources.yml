@@ -1,0 +1,72 @@
+version: 2
+
+sources:
+  - name: adventureworks
+    description: "Landing layer - Raw data from PostgreSQL stored in SeaweedFS as Parquet"
+    meta:
+      external_location: "read_parquet('s3://lakehouse/landing/{schema}/{name}.parquet')"
+
+    tables:
+      # person schema
+      - name: address
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/person/person_address.parquet')"
+
+      - name: country
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/person/person_countryregion.parquet')"
+
+      - name: person
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/person/person_person.parquet')"
+
+      - name: state_province
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/person/person_stateprovince.parquet')"
+
+      # humanresources schema
+      - name: employee
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/humanresources/humanresources_employee.parquet')"
+
+      # production schema
+      - name: product_category
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/production/production_productcategory.parquet')"
+
+      - name: product_subcategory
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/production/production_productsubcategory.parquet')"
+
+      - name: product
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/production/production_product.parquet')"
+
+      # sales schema
+      - name: currency
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_currency.parquet')"
+
+      - name: customer
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_customer.parquet')"
+
+      - name: sales_order_header
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_salesorderheader.parquet')"
+
+      - name: sales_order_details
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_salesorderdetail.parquet')"
+
+      - name: sales_territory
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_salesterritory.parquet')"
+
+      - name: special_offer
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_specialoffer.parquet')"
+
+      - name: store
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/sales/sales_store.parquet')"

@@ -1,0 +1,228 @@
+
+version: "3.8"
+
+services:
+  # datasource service (illustrate for real ERP)
+  datasource-postgres:
+    image: chriseaton/adventureworks:postgres
+    container_name: adventureworks_postgresl_datasource
+    env_file: ./.env
+    environment:
+      - POSTGRES_USER=${DATASOURCE_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DATASOURCE_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${DATASOURCE_POSTGRES_DB}
+    ports:
+      - "${DATASOURCE_POSTGRES_PORT}:5432"
+    networks:
+      - adventure_work_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATASOURCE_POSTGRES_USER} -d ${DATASOURCE_POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_wal_senders=10"
+      - "-c"
+      - "max_replication_slots=10"
+      - "-c"
+      - "fsync=off"
+      - "-c"
+      - "synchronous_commit=off"
+      - "-c"
+      - "full_page_writes=off"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "maintenance_work_mem=256MB"
+      - "-c"
+      - "checkpoint_timeout=30min"
+      - "-c"
+      - "max_wal_size=2GB"
+    restart: on-failure
+
+  
+  # PostgreSQL
+  postgres:
+    image: postgres:14
+    container_name: adventureworks_dagster_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DAGSTER_PG_USERNAME}
+      POSTGRES_PASSWORD: ${DAGSTER_PG_PASSWORD}
+      POSTGRES_DB: ${DAGSTER_PG_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - adventure_work_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DAGSTER_PG_USERNAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: adventureworks_pgadmin
+    env_file: ./.env
+    user: "0:0"
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+        mkdir -p /var/lib/pgadmin/sessions
+        chown -R 5050:5050 /var/lib/pgadmin
+        exec /entrypoint.sh
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${DATASOURCE_PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+      - PGADMIN_DEFAULT_PASSWORD=${DATASOURCE_PGADMIN_DEFAULT_PASSWORD:-admin}
+    volumes:
+      - ./volumes/pgadmin:/var/lib/pgadmin
+    ports:
+      - "${DATASOURCE_PGADMIN_PORT:-8080}:80"
+    networks:
+      - adventure_work_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+
+  # SeaweedFS (S3 Compatible Storage)
+  seaweedfs:
+    image: chrislusf/seaweedfs 
+    container_name: adventureworksseaweedfs
+    restart: unless-stopped
+    # Lệnh này chạy "all-in-one": Master, Volume, Filer và S3 Gateway cùng lúc
+    command: "server -dir=/data -s3 -ip=adventureworksseaweedfs"
+    ports:
+      - "${SEAWEEDFS_MASTER_PORT}:9333"
+      - "${SEAWEEDFS_VOLUME_PORT}:8080"
+      - "${SEAWEEDFS_FILER_PORT}:8888"
+      - "${SEAWEEDFS_S3_PORT}:8333"
+    volumes:
+      - seaweedfs_data:/data
+    networks:
+      - adventure_work_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8333/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+
+  # User code (Code Server)
+  user-code:
+    build:
+      context: .              # Build từ thư mục root
+      dockerfile: docker/Dockerfile
+    container_name: adventureworks_dagster_user_code
+    image: my_dagster_image:latest
+    restart: unless-stopped
+    environment:
+      DAGSTER_IS_DEV_CLI: ${DAGSTER_IS_DEV_CLI:-False}
+      DBT_PROFILES_DIR: ${DBT_PROFILES_DIR:-/opt/dagster/app/dbt_project}
+      DUCKDB_PATH: ${DUCKDB_PATH:-/opt/dagster/app/dbt_project/dbt.duckdb}
+
+      DAGSTER_HOME: /opt/dagster/dagster_home
+      S3_ENDPOINT: http://adventureworksseaweedfs:8333
+    env_file:
+      - .env
+    volumes:
+
+      # Mount config từ root
+      - ./dagster_home:/opt/dagster/dagster_home
+      
+      # Mount code Python: Từ folder con etl_pipeline/src vào đúng chỗ trong docker
+      - ./etl_pipeline/src:/opt/dagster/app/etl_pipeline/src
+      
+      # Mount code dbt: Từ folder dbt_project vào docker
+      - ./dbt_project:/opt/dagster/app/dbt_project
+      
+      # Mount artifacts (để giữ lại kết quả compile/run)
+      #- dbt_target:/opt/dagster/app/dbt_project/target
+      # - dbt_logs:/opt/dagster/app/dbt_project/logs
+    networks:
+      - adventure_work_network
+    healthcheck:
+      test: ["CMD", "dagster", "api", "grpc-health-check", "-p", "4000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Dagster Webserver
+  dagster-webserver:
+    image: my_dagster_image:latest
+    container_name: adventureworks_dagster_webserver
+    restart: unless-stopped
+    entrypoint:
+      - dagster-webserver
+      - -h
+      - "0.0.0.0"
+      - -p
+      - "3000"
+      - -w
+      - "/opt/dagster/dagster_home/workspace.yaml"
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+    volumes:
+      - ./dagster_home:/opt/dagster/dagster_home
+      - dagster_compute_logs:/opt/dagster/dagster_home/compute_logs
+      - dagster_local_artifact_storage:/opt/dagster/dagster_home/local_artifact_storage
+    networks:
+      - adventure_work_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      user-code:
+        condition: service_healthy
+
+  # Dagster Daemon
+  dagster-daemon:
+    image: my_dagster_image:latest
+    container_name: adventureworks_dagster_daemon
+    restart: unless-stopped
+    entrypoint:
+      - dagster-daemon
+      - run
+      - -w
+      - "/opt/dagster/dagster_home/workspace.yaml"
+    env_file:
+      - .env
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+    volumes:
+      - ./dagster_home:/opt/dagster/dagster_home
+      - dagster_compute_logs:/opt/dagster/dagster_home/compute_logs
+      - dagster_local_artifact_storage:/opt/dagster/dagster_home/local_artifact_storage
+    networks:
+      - adventure_work_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      user-code:
+        condition: service_healthy
+
+networks:
+  adventure_work_network:
+    driver: bridge
+    name: adventure_work_network
+
+volumes:
+  postgres_data:
+  dagster_compute_logs:
+  dagster_local_artifact_storage:
+  dbt_target:
+  #dbt_logs:
+  seaweedfs_data:

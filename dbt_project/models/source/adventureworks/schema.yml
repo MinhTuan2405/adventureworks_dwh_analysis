@@ -1,0 +1,366 @@
+version: 2
+
+models:
+  # base_adventureworks_address model
+  - name: base_adventureworks_address
+    description: base model for address
+
+    columns:
+      - name: address_id
+        description: Primary key of address
+        tests:
+          - not_null
+          - unique
+
+      - name: state_province_id
+        description: Foreign key to state province
+        tests:
+          - not_null
+
+      - name: address_line_1
+        tests:
+          - not_null
+
+      - name: city
+        tests:
+          - not_null
+
+      - name: postal_code
+        tests:
+          - not_null
+
+
+  # base_adventureworks_country model
+  - name: base_adventureworks_country
+    description: Base model for AdventureWorks country region
+
+    columns:
+      - name: country_region_code
+        description: Country region code (primary key)
+        tests:
+          - not_null
+          - unique
+
+      - name: name
+        description: Country or region name
+        tests:
+          - not_null
+
+  # base_adventureworks_currency model
+  - name: base_adventureworks_currency
+    description: Base model for AdventureWorks country region
+
+    columns:
+      - name: currency_code
+        description: currency code (primary key)
+        tests:
+          - not_null
+          - unique
+
+      - name: name
+        description: currency name
+        tests:
+          - not_null
+
+  # base_adventureworks_customer model
+  - name: base_adventureworks_customer
+    description: "Dữ liệu khách hàng từ hệ thống AdventureWorks, đã được chuẩn hóa tên cột và ép kiểu."
+    columns:
+      - name: customer_id
+        description: "Khóa chính của bảng khách hàng."
+        tests:
+          - unique
+          - not_null
+
+  # base_adventureworks_employee model
+  - name: base_adventureworks_employee
+    description: "Dữ liệu nhân viên AdventureWorks với OrganizationNode được tái cấu trúc."
+    columns:
+      - name: employee_id
+        tests:
+          - unique
+          - not_null
+
+      - name: organization_node
+        description: "Node phân cấp bắt đầu bằng /0/. Ví dụ: CEO là /0/"
+        tests:
+          - not_null
+
+      - name: is_salaried
+        description: "Cờ xác định nhân viên hưởng lương tháng hay theo giờ."
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_active
+        description: "Trạng thái nhân viên còn làm việc hay không."
+        tests:
+          - accepted_values:
+              values: [true, false]
+
+      - name: birthday
+        tests:
+          - not_null
+
+  # base_adventureworks_person model
+  - name: base_adventureworks_person
+    description: "Dữ liệu thông tin cá nhân từ hệ thống AdventureWorks bao gồm nhân viên, khách hàng và các liên hệ."
+    columns:
+      - name: business_entity_id
+        description: "Khóa chính của bảng person (business entity)."
+        tests:
+          - unique
+          - not_null
+
+      - name: person_type
+        description: "Loại người: EM (Employee), IN (Individual Customer), SC (Store Contact), etc."
+        tests:
+          - not_null
+
+      - name: first_name
+        description: "Tên của người."
+        tests:
+          - not_null
+
+      - name: last_name
+        description: "Họ của người."
+        tests:
+          - not_null
+
+  # base_adventureworks_product_category model
+  - name: base_adventureworks_product_category
+    description: "Danh mục sản phẩm cấp cao nhất như Bikes, Components, Clothing, Accessories."
+    columns:
+      - name: product_category_id
+        description: "Khóa chính của bảng product category."
+        tests:
+          - unique
+          - not_null
+
+      - name: product_category_name
+        description: "Tên danh mục sản phẩm."
+        tests:
+          - not_null
+
+  # base_adventureworks_product_subcategory model
+  - name: base_adventureworks_product_subcategory
+    description: "Danh mục sản phẩm chi tiết thuộc các category chính."
+    columns:
+      - name: product_subcategory_id
+        description: "Khóa chính của bảng product subcategory."
+        tests:
+          - unique
+          - not_null
+
+      - name: product_category_id
+        description: "Khóa ngoại đến product category."
+        tests:
+          - not_null
+
+      - name: product_subcategory_name
+        description: "Tên danh mục sản phẩm chi tiết."
+        tests:
+          - not_null
+
+  # base_adventureworks_product model
+  - name: base_adventureworks_product
+    description: "Thông tin chi tiết về sản phẩm bao gồm giá, màu sắc, kích thước và các thuộc tính khác."
+    columns:
+      - name: product_id
+        description: "Khóa chính của bảng product."
+        tests:
+          - unique
+          - not_null
+
+      - name: product_name
+        description: "Tên sản phẩm."
+        tests:
+          - not_null
+
+      - name: product_number
+        description: "Mã số sản phẩm duy nhất."
+        tests:
+          - not_null
+          - unique
+
+      - name: is_manufactured_in_house
+        description: "Sản phẩm được sản xuất nội bộ hay không."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_finished_good
+        description: "Sản phẩm hoàn thiện hay linh kiện."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: standard_cost
+        description: "Chi phí tiêu chuẩn của sản phẩm."
+        tests:
+          - not_null
+
+      - name: list_price
+        description: "Giá niêm yết của sản phẩm."
+        tests:
+          - not_null
+
+  # base_adventureworks_sales_order_details model
+  - name: base_adventureworks_sales_order_details
+    description: "Chi tiết từng dòng sản phẩm trong đơn hàng bán hàng."
+    columns:
+      - name: sales_order_detail_id
+        description: "Khóa chính của bảng sales order detail."
+        tests:
+          - unique
+          - not_null
+
+      - name: sales_order_id
+        description: "Khóa ngoại đến sales order header."
+        tests:
+          - not_null
+
+      - name: product_id
+        description: "Khóa ngoại đến product."
+        tests:
+          - not_null
+
+      - name: order_qty
+        description: "Số lượng sản phẩm đặt hàng."
+        tests:
+          - not_null
+
+      - name: unit_price
+        description: "Đơn giá của sản phẩm tại thời điểm đặt hàng."
+        tests:
+          - not_null
+
+  # base_adventureworks_sales_order_header model
+  - name: base_adventureworks_sales_order_header
+    description: "Thông tin đầu đơn hàng bán hàng bao gồm khách hàng, ngày đặt, địa chỉ và tổng tiền."
+    columns:
+      - name: sales_order_id
+        description: "Khóa chính của bảng sales order header."
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: "Khóa ngoại đến customer."
+        tests:
+          - not_null
+
+      - name: order_date
+        description: "Ngày đặt hàng."
+        tests:
+          - not_null
+
+      - name: status_code
+        description: "Trạng thái đơn hàng (1=Pending, 2=Approved, 3=Backordered, etc.)."
+        tests:
+          - not_null
+
+      - name: sub_total
+        description: "Tổng tiền trước thuế và phí vận chuyển."
+        tests:
+          - not_null
+
+  # base_adventureworks_sales_territory model
+  - name: base_adventureworks_sales_territory
+    description: "Vùng bán hàng địa lý bao gồm doanh số và chi phí theo năm."
+    columns:
+      - name: territory_id
+        description: "Khóa chính của bảng sales territory."
+        tests:
+          - unique
+          - not_null
+
+      - name: territory_name
+        description: "Tên vùng bán hàng."
+        tests:
+          - not_null
+
+      - name: country_region_code
+        description: "Mã quốc gia/khu vực."
+        tests:
+          - not_null
+
+      - name: territory_group
+        description: "Nhóm vùng (North America, Europe, Pacific, etc.)."
+        tests:
+          - not_null
+
+  # base_adventureworks_special_offer model
+  - name: base_adventureworks_special_offer
+    description: "Các chương trình khuyến mại và ưu đãi đặc biệt cho sản phẩm."
+    columns:
+      - name: special_offer_id
+        description: "Khóa chính của bảng special offer."
+        tests:
+          - unique
+          - not_null
+
+      - name: description
+        description: "Mô tả chương trình khuyến mại."
+        tests:
+          - not_null
+
+      - name: discount_percentage
+        description: "Phần trăm giảm giá."
+        tests:
+          - not_null
+
+      - name: start_date
+        description: "Ngày bắt đầu chương trình."
+        tests:
+          - not_null
+
+      - name: end_date
+        description: "Ngày kết thúc chương trình."
+        tests:
+          - not_null
+
+  # base_adventureworks_state_province model
+  - name: base_adventureworks_state_province
+    description: "Thông tin về bang/tỉnh trong các quốc gia."
+    columns:
+      - name: state_province_id
+        description: "Khóa chính của bảng state province."
+        tests:
+          - unique
+          - not_null
+
+      - name: state_province_code
+        description: "Mã bang/tỉnh (viết tắt)."
+        tests:
+          - not_null
+
+      - name: country_region_code
+        description: "Mã quốc gia/khu vực."
+        tests:
+          - not_null
+
+      - name: state_province_name
+        description: "Tên đầy đủ của bang/tỉnh."
+        tests:
+          - not_null
+
+  # base_adventureworks_store model
+  - name: base_adventureworks_store
+    description: "Thông tin về các cửa hàng khách hàng bao gồm doanh thu, loại hình kinh doanh và thông tin chi tiết."
+    columns:
+      - name: store_id
+        description: "Khóa chính của bảng store (business entity)."
+        tests:
+          - unique
+          - not_null
+
+      - name: store_name
+        description: "Tên cửa hàng."
+        tests:
+          - not_null
+
+      - name: sales_person_id
+        description: "Nhân viên bán hàng phụ trách cửa hàng."

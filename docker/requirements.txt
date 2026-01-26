@@ -1,0 +1,22 @@
+# Dagster core mới nhất để hỗ trợ code sinh ra bởi uvx
+dagster>=1.7.0
+dagster-postgres>=0.23.0
+dagster-webserver>=1.7.0
+dagster-dbt>=0.23.0
+
+# Ghim dbt ở 1.7 để ổn định (tránh lỗi 1.8 factory)
+dbt-core==1.7.15
+dbt-duckdb==1.7.4
+
+# Các thư viện phụ trợ
+pandas
+duckdb
+protobuf==4.25.3
+
+# PostgreSQL ingestion
+psycopg2-binary
+sqlalchemy
+
+# S3 / SeaweedFS
+boto3
+s3fs
