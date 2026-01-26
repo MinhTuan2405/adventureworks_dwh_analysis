@@ -64,32 +64,32 @@ services:
       timeout: 5s
       retries: 5
   
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: adventureworks_pgadmin
-    env_file: ./.env
-    user: "0:0"
-    entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        set -e
-        mkdir -p /var/lib/pgadmin/sessions
-        chown -R 5050:5050 /var/lib/pgadmin
-        exec /entrypoint.sh
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${DATASOURCE_PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
-      - PGADMIN_DEFAULT_PASSWORD=${DATASOURCE_PGADMIN_DEFAULT_PASSWORD:-admin}
-    volumes:
-      - ./volumes/pgadmin:/var/lib/pgadmin
-    ports:
-      - "${DATASOURCE_PGADMIN_PORT:-8080}:80"
-    networks:
-      - adventure_work_network
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: on-failure
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: adventureworks_pgadmin
+  #   env_file: ./.env
+  #   user: "0:0"
+  #   entrypoint:
+  #     - /bin/sh
+  #     - -c
+  #     - |
+  #       set -e
+  #       mkdir -p /var/lib/pgadmin/sessions
+  #       chown -R 5050:5050 /var/lib/pgadmin
+  #       exec /entrypoint.sh
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=${DATASOURCE_PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+  #     - PGADMIN_DEFAULT_PASSWORD=${DATASOURCE_PGADMIN_DEFAULT_PASSWORD:-admin}
+  #   volumes:
+  #     - ./volumes/pgadmin:/var/lib/pgadmin
+  #   ports:
+  #     - "${DATASOURCE_PGADMIN_PORT:-8080}:80"
+  #   networks:
+  #     - adventure_work_network
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   restart: on-failure
 
   # SeaweedFS (S3 Compatible Storage)
   seaweedfs:
@@ -213,6 +213,19 @@ services:
         condition: service_healthy
       user-code:
         condition: service_healthy
+    
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: adventureworks_cloudbeaver
+    env_file: ./.env
+    volumes:
+      - ./volumes/cloudbeaver:/opt/cloudbeaver/workspace
+      - ./dbt_project:/opt/dbt_project
+    ports:
+      - "${CLOUDBEAVER_PORT:-8978}:8978"
+    networks:
+      - adventure_work_network
+    restart: on-failure
 
 networks:
   adventure_work_network:
