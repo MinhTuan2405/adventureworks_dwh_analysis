@@ -20,10 +20,10 @@ with source as (
         cast(OrderQty as integer)                   as order_qty,
         cast(ProductID as integer)                  as product_id,
         cast(UnitPrice as decimal(19,4))            as unit_price,
-        cast(LineTotal as decimal(19,4))            as line_total,
+        try_cast(LineTotal as decimal(19,4))        as line_total,
         cast(ReceivedQty as decimal(8,2))           as received_qty,
         cast(RejectedQty as decimal(8,2))           as rejected_qty,
-        cast(StockedQty as decimal(8,4))            as stocked_qty,
+        try_cast(StockedQty as decimal(8,4))        as stocked_qty,
         cast(ModifiedDate as timestamp)             as modified_date
     from source
 )

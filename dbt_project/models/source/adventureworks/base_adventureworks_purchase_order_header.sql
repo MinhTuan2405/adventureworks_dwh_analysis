@@ -21,11 +21,11 @@ with source as (
         cast(VendorID as integer)                   as vendor_id,
         cast(ShipMethodID as integer)               as ship_method_id,
         cast(OrderDate as timestamp)                as order_date,
-        cast(ShipDate as timestamp)                 as ship_date,
+        try_cast(ShipDate as timestamp)             as ship_date,
         cast(SubTotal as decimal(19,4))             as sub_total,
         cast(TaxAmt as decimal(19,4))               as tax_amt,
         cast(Freight as decimal(19,4))              as freight,
-        cast(TotalDue as decimal(19,4))             as total_due,
+        try_cast(TotalDue as decimal(19,4))         as total_due,
         cast(ModifiedDate as timestamp)             as modified_date
     from source
 )
