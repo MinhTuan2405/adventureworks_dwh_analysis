@@ -92,8 +92,17 @@ sources:
         meta:
           external_location: "read_parquet('s3://lakehouse/landing/purchasing/purchasing_shipmethod.parquet')"
 
+      - name: product_vendor
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/purchasing/purchasing_productvendor.parquet')"
 
+      - name: purchase_order_details
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/purchasing/purchasing_purchaseorderdetail.parquet')"
 
-
-
-          
+      - name: purchase_order_header
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/purchasing/purchasing_purchaseorderheader.parquet')"
+      - name: vendor
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/purchasing/purchasing_vendor.parquet')"
