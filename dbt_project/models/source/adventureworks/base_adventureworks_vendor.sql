@@ -14,7 +14,7 @@ with source as (
 
 , final as (
     select
-        cast(BusinessEntityID as integer)           as business_entity_id,
+        cast(BusinessEntityID as integer)           as vendor_id,
         cast(AccountNumber as varchar(128))         as account_number,
         cast(Name as varchar(256))                  as vendor_name,
         cast(CreditRating as integer)               as credit_rating,
