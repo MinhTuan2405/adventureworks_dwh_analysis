@@ -12,27 +12,24 @@ with base_purchase as (
     from {{ ref('stg_adventureworks_purchase')}}
 )
 
-        
-
-
-, dim_vendor as (
+, stg_vendor as (
     select dim_adventureworks_vendor_sk, vendor_id
-    from {{ ref('dim_adventureworks_vendor')}}
+    from {{ ref('stg_adventureworks_vendor')}}
 )
 
-, dim_product as (
+, stg_product as (
     select dim_adventureworks_product_sk, product_id
-    from {{ ref('dim_adventureworks_product') }}
+    from {{ ref('stg_adventureworks_product') }}
 )
 
-, dim_employee as (
+, stg_employee as (
     select dim_adventureworks_employee_sk, employee_id
-    from {{ ref('dim_adventureworks_employee') }}
+    from {{ ref('stg_adventureworks_employee') }}
 )
 
-, dim_ship_method as (
+, stg_ship_method as (
     select dim_adventureworks_ship_method_sk, ship_method_id
-    from {{ ref('dim_adventureworks_ship_method') }}
+    from {{ ref('stg_adventureworks_ship_method') }}
 )
 
 , dim_date as (
@@ -82,13 +79,13 @@ with base_purchase as (
         bp.total_due as order_total_due
         
     from base_purchase bp
-    left join dim_vendor dv
+    left join stg_vendor dv
         on bp.vendor_id = dv.vendor_id
-    left join dim_product dp
+    left join stg_product dp
         on bp.product_id = dp.product_id
-    left join dim_employee de
+    left join stg_employee de
         on bp.employee_id = de.employee_id
-    left join dim_ship_method dsm
+    left join stg_ship_method dsm
         on bp.ship_method_id = dsm.ship_method_id
     left join dim_date dd_order
         on cast(strftime(bp.order_date, '%Y%m%d') as integer) = dd_order.date_key
@@ -101,7 +98,7 @@ with base_purchase as (
 , final as (
     select
         -- Primary key
-        {{ dbt_utils.generate_surrogate_key(['purchase_order_detail_id']) }} as fct_adventureworks_purchase_pk,
+        {{ dbt_utils.generate_surrogate_key(['purchase_order_detail_id']) }} as adventureworks_purchase_pk,
         
         *
     from joined

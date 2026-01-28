@@ -68,6 +68,9 @@ with employee as (
 
 , reconstruct_organization_node as (
     select
+        -- Surrogate key
+        {{ dbt_utils.generate_surrogate_key(['employee_id']) }} as dim_adventureworks_employee_sk,
+        
         employee_id,
         first_name,
         middle_name,

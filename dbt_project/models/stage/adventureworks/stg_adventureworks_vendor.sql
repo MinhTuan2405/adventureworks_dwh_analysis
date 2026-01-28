@@ -12,14 +12,24 @@ with base as (
     from {{ ref('base_adventureworks_vendor')}}
 )
 
+-- , vendor_address as (
+
+-- )
+
 , final as (
     select
+        -- Surrogate key
+        {{ dbt_utils.generate_surrogate_key(['vendor_id', 'account_number']) }} as dim_adventureworks_vendor_sk,
+        
+        -- Natural key
         vendor_id,
-        trim(account_number) as account_number,
+        account_number,
+        
+        -- Attributes
         trim(vendor_name) as vendor_name,
         credit_rating,
         is_preferred_vendor,
-        is_active,
+        is_active
     from base
 )
 

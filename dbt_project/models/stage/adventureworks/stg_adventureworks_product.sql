@@ -24,9 +24,13 @@ with product as (
 
 , joined as (
     select
+        -- Surrogate key
+        {{ dbt_utils.generate_surrogate_key(['p.product_id']) }} as dim_adventureworks_product_sk,
+        
+        -- Natural key
         p.product_id,
         
-        -- Clean string fields
+        -- Product identifiers
         trim(p.product_name)                    as product_name,
         trim(p.product_number)                  as product_number,
         

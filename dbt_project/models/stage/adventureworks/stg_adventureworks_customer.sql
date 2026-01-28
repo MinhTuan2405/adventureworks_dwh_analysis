@@ -95,6 +95,10 @@ with base_customer as (
 
 , joined as (
     select
+        -- Surrogate keys (for both internet and reseller)
+        {{ dbt_utils.generate_surrogate_key(['c.customer_id']) }} as dim_adventureworks_internet_customer_sk,
+        {{ dbt_utils.generate_surrogate_key(['c.customer_id', 's.store_id']) }} as dim_adventureworks_reseller_customer_sk,
+        
         -- Customer identifiers
         c.customer_id,
         c.territory_id,

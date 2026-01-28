@@ -24,6 +24,10 @@ sources:
         meta:
           external_location: "read_parquet('s3://lakehouse/landing/person/person_stateprovince.parquet')"
 
+      - name: business_entity_address
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/person/person_businessentityaddress.parquet')"
+
       # humanresources schema
       - name: employee
         meta:

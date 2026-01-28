@@ -13,44 +13,44 @@ with sales as (
     where is_online_order = false
 )
 
-, dim_customer as (
+, stg_customer as (
     select dim_adventureworks_reseller_customer_sk, customer_id
-    from {{ ref('dim_adventureworks_reseller_customer') }}
+    from {{ ref('stg_adventureworks_customer') }}
 )
 
-, dim_product as (
+, stg_product as (
     select dim_adventureworks_product_sk, product_id
-    from {{ ref('dim_adventureworks_product') }}
+    from {{ ref('stg_adventureworks_product') }}
 )
 
-, dim_employee as (
+, stg_employee as (
     select dim_adventureworks_employee_sk, employee_id
-    from {{ ref('dim_adventureworks_employee') }}
+    from {{ ref('stg_adventureworks_employee') }}
 )
 
-, dim_territory as (
+, stg_territory as (
     select dim_adventureworks_sales_territory_sk, territory_id
-    from {{ ref('dim_adventureworks_sales_territory') }}
+    from {{ ref('stg_adventureworks_sales_territory') }}
 )
 
-, dim_geo_bill as (
+, stg_geo_bill as (
     select dim_adventureworks_geography_sk, address_id
-    from {{ ref('dim_adventureworks_geography') }}
+    from {{ ref('stg_adventureworks_address') }}
 )
 
-, dim_geo_ship as (
+, stg_geo_ship as (
     select dim_adventureworks_geography_sk, address_id
-    from {{ ref('dim_adventureworks_geography') }}
+    from {{ ref('stg_adventureworks_address') }}
 )
 
-, dim_ship_method as (
+, stg_ship_method as (
     select dim_adventureworks_ship_method_sk, ship_method_id
-    from {{ ref('dim_adventureworks_ship_method') }}
+    from {{ ref('stg_adventureworks_ship_method') }}
 )
 
-, dim_currency as (
+, stg_currency as (
     select dim_adventureworks_currency_sk, currency_rate_id
-    from {{ ref('dim_adventureworks_currency') }}
+    from {{ ref('stg_adventureworks_currency') }}
 )
 
 , dim_date as (
@@ -114,21 +114,21 @@ with sales as (
         s.total_due as order_total_due
         
     from sales s
-    left join dim_customer dc
+    left join stg_customer dc
         on s.customer_id = dc.customer_id
-    left join dim_product dp
+    left join stg_product dp
         on s.product_id = dp.product_id
-    left join dim_employee de
+    left join stg_employee de
         on s.sales_person_id = de.employee_id
-    left join dim_territory dt
+    left join stg_territory dt
         on s.territory_id = dt.territory_id
-    left join dim_geo_bill dgb
+    left join stg_geo_bill dgb
         on s.bill_to_address_id = dgb.address_id
-    left join dim_geo_ship dgs
+    left join stg_geo_ship dgs
         on s.ship_to_address_id = dgs.address_id
-    left join dim_ship_method dsm
+    left join stg_ship_method dsm
         on s.ship_method_id = dsm.ship_method_id
-    left join dim_currency dcur
+    left join stg_currency dcur
         on s.currency_rate_id = dcur.currency_rate_id
     left join dim_date dd_order
         on cast(strftime(s.order_date, '%Y%m%d') as integer) = dd_order.date_key
@@ -141,7 +141,7 @@ with sales as (
 , final as (
     select
         -- Primary key
-        {{ dbt_utils.generate_surrogate_key(['sales_order_detail_id']) }} as fct_adventureworks_reseller_sales_pk,
+        {{ dbt_utils.generate_surrogate_key(['sales_order_detail_id']) }} as adventureworks_reseller_sales_pk,
         
         *
     from joined

@@ -7,35 +7,9 @@
   ) 
 }}
 
-with source as (
-    select * 
+with final as (
+    select *
     from {{ ref('stg_adventureworks_currency') }}
-)
-
-, final as (
-    select
-        -- Surrogate key
-        {{ dbt_utils.generate_surrogate_key(['currency_rate_id']) }} as dim_adventureworks_currency_sk,
-        
-        -- Natural key
-        currency_rate_id,
-        
-        -- Date
-        currency_rate_date,
-        
-        -- From currency attributes
-        from_currency_code,
-        from_currency_name,
-        
-        -- To currency attributes
-        to_currency_code,
-        to_currency_name,
-        
-        -- Rate attributes
-        average_rate,
-        end_of_day_rate
-
-    from source
 )
 
 -- Add unknown member

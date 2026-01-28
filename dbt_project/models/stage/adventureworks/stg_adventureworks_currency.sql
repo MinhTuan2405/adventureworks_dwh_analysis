@@ -19,6 +19,10 @@ with currency_rate as (
 
 , joined as (
     select
+        -- Surrogate key
+        {{ dbt_utils.generate_surrogate_key(['cr.currency_rate_id']) }} as dim_adventureworks_currency_sk,
+        
+        -- Natural key
         cr.currency_rate_id,
         cr.currency_rate_date,
         

@@ -19,6 +19,10 @@ with sales_territory as (
 
 , joined as (
     select
+        -- Surrogate key
+        {{ dbt_utils.generate_surrogate_key(['st.territory_id']) }} as dim_adventureworks_sales_territory_sk,
+        
+        -- Natural key
         st.territory_id,
         
         -- Clean string fields

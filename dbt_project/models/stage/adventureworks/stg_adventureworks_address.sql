@@ -24,6 +24,10 @@ with address as (
 
 , joined as (
     select
+        -- Surrogate key
+        {{ dbt_utils.generate_surrogate_key(['a.address_id']) }} as dim_adventureworks_geography_sk,
+        
+        -- Natural key
         a.address_id,
         a.state_province_id,
         

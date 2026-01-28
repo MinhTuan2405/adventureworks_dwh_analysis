@@ -8,29 +8,10 @@
 }}
 
 
-with base as (
+with final as (
     select *
-    from {{ ref ('stg_adventureworks_vendor')}}
-)
-
-, add_key as (
-    select
-        -- Surrogate key
-        {{ dbt_utils.generate_surrogate_key(['vendor_id', 'account_number']) }} as dim_adventureworks_vendor_sk,
-
-
-        -- Natural key
-        vendor_id,
-        account_number,
-
-        -- Attributes
-        vendor_name,
-        credit_rating,
-        is_preferred_vendor,
-        is_active
-
-    from base
+    from {{ ref('stg_adventureworks_vendor')}}
 )
 
 select *
-from add_key
+from final
