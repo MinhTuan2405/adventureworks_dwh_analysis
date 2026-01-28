@@ -99,3 +99,45 @@ models:
         tests:
           - unique
           - not_null
+
+  - name: stg_adventureworks_vendor
+    description: "Staging table for vendors"
+    columns:
+      - name: vendor_id
+        description: "Primary key for vendors"
+        tests:
+          - unique
+          - not_null
+      - name: account_number
+        description: "Vendor account number"
+        tests:
+          - not_null
+      - name: vendor_name
+        description: "Vendor name"
+        tests:
+          - not_null
+
+  - name: stg_adventureworks_purchase
+    description: "Staging table for purchase orders combining header and details"
+    columns:
+      - name: purchase_order_detail_id
+        description: "Primary key for purchase order line item"
+        tests:
+          - unique
+          - not_null
+      - name: purchase_order_id
+        description: "Purchase order header identifier"
+        tests:
+          - not_null
+      - name: vendor_id
+        description: "Vendor identifier"
+        tests:
+          - not_null
+      - name: product_id
+        description: "Product identifier"
+        tests:
+          - not_null
+      - name: order_date
+        description: "Date order was placed"
+        tests:
+          - not_null

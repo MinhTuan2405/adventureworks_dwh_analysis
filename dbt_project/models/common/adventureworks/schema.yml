@@ -126,6 +126,24 @@ models:
         tests:
           - not_null
 
+  # Vendor Dimension
+  - name: dim_adventureworks_vendor
+    description: "Vendor dimension for purchasing"
+    columns:
+      - name: dim_adventureworks_vendor_sk
+        description: "Surrogate key for vendors"
+        tests:
+          - unique
+          - not_null
+      - name: vendor_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+      - name: account_number
+        description: "Vendor account number"
+        tests:
+          - not_null
+
   # Fact Tables
   - name: fct_adventureworks_internet_sales
     description: "Internet sales fact table at line item grain"
@@ -191,6 +209,44 @@ models:
           - relationships:
               to: ref('dim_adventureworks_reseller_customer')
               field: dim_adventureworks_reseller_customer_sk
+      - name: dim_adventureworks_product_sk
+        description: "Foreign key to dim_adventureworks_product"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_adventureworks_product')
+              field: dim_adventureworks_product_sk
+      - name: line_total
+        description: "Line item total amount"
+        tests:
+          - not_null
+
+  - name: fct_adventureworks_purchase
+    description: "Purchase order fact table at line item grain"
+    columns:
+      - name: fct_adventureworks_purchase_pk
+        description: "Primary key for fact table"
+        tests:
+          - unique
+          - not_null
+      - name: purchase_order_detail_id
+        description: "Natural key for purchase order line item"
+        tests:
+          - not_null
+      - name: order_date_key
+        description: "Foreign key to dim_date"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+      - name: dim_adventureworks_vendor_sk
+        description: "Foreign key to dim_adventureworks_vendor"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_adventureworks_vendor')
+              field: dim_adventureworks_vendor_sk
       - name: dim_adventureworks_product_sk
         description: "Foreign key to dim_adventureworks_product"
         tests:

@@ -364,3 +364,66 @@ models:
 
       - name: sales_person_id
         description: "Nhân viên bán hàng phụ trách cửa hàng."
+
+  # base_adventureworks_vendor model
+  - name: base_adventureworks_vendor
+    description: "Thông tin về các nhà cung cấp sản phẩm."
+    columns:
+      - name: vendor_id
+        description: "Khóa chính của bảng vendor."
+        tests:
+          - unique
+          - not_null
+      - name: vendor_name
+        description: "Tên nhà cung cấp."
+        tests:
+          - not_null
+
+  # base_adventureworks_purchase_order_header model
+  - name: base_adventureworks_purchase_order_header
+    description: "Thông tin đầu đơn hàng mua bao gồm vendor, nhân viên đặt hàng, ngày đặt và tổng tiền."
+    columns:
+      - name: purchase_order_id
+        description: "Khóa chính của bảng purchase order header."
+        tests:
+          - unique
+          - not_null
+      - name: vendor_id
+        description: "Khóa ngoại đến vendor."
+        tests:
+          - not_null
+      - name: order_date
+        description: "Ngày đặt hàng."
+        tests:
+          - not_null
+
+  # base_adventureworks_purchase_order_details model
+  - name: base_adventureworks_purchase_order_details
+    description: "Chi tiết từng dòng sản phẩm trong đơn hàng mua."
+    columns:
+      - name: purchase_order_detail_id
+        description: "Khóa chính của bảng purchase order detail."
+        tests:
+          - unique
+          - not_null
+      - name: purchase_order_id
+        description: "Khóa ngoại đến purchase order header."
+        tests:
+          - not_null
+      - name: product_id
+        description: "Khóa ngoại đến product."
+        tests:
+          - not_null
+
+  # base_adventureworks_product_vendor model
+  - name: base_adventureworks_product_vendor
+    description: "Quan hệ giữa sản phẩm và vendor."
+    columns:
+      - name: product_id
+        description: "Khóa ngoại đến product."
+        tests:
+          - not_null
+      - name: business_entity_id
+        description: "Khóa ngoại đến vendor."
+        tests:
+          - not_null
