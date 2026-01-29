@@ -21,7 +21,13 @@ with base_purchase_header as (
     select 
         purchase_order_id,
         revision_number,
-        status,
+        case 
+            when status = 1 then 'Pending'
+            when status = 2 then 'Approved'
+            when status = 3 then 'Rejected'
+            when status = 4 then 'Complete'
+            else 'Unknown'
+        end as order_status,
         employee_id,
         vendor_id,
         ship_method_id,
@@ -71,7 +77,7 @@ with base_purchase_header as (
         -- header
         h.purchase_order_id,
         h.revision_number,
-        h.status,
+        h.order_status,
         h.employee_id,
         h.vendor_id,
         h.ship_method_id,

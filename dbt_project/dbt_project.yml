@@ -38,7 +38,11 @@ models:
     
     common:
       adventureworks:
-        +schema: "sale_dwh"
+        +schema: "adventureworks_dwh"
+    
+    common_mapping:
+      adventureworks:
+        +schema: "mapping"
 
     # gold:
     #   +schema: "gold"

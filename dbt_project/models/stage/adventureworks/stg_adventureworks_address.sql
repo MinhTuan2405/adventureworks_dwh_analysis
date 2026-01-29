@@ -44,7 +44,6 @@ with address as (
         -- State/Province info
         sp.state_province_code,
         sp.state_province_name,
-        sp.territory_id,
         sp.is_only_state_province,
         
         -- Country info

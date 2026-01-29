@@ -148,7 +148,7 @@ models:
   - name: fct_adventureworks_internet_sales
     description: "Internet sales fact table at line item grain"
     columns:
-      - name: fct_adventureworks_internet_sales_pk
+      - name: adventureworks_internet_sales_pk
         description: "Primary key for fact table"
         tests:
           - unique
@@ -186,7 +186,7 @@ models:
   - name: fct_adventureworks_reseller_sales
     description: "Reseller sales fact table at line item grain"
     columns:
-      - name: fct_adventureworks_reseller_sales_pk
+      - name: adventureworks_reseller_sales_pk
         description: "Primary key for fact table"
         tests:
           - unique

@@ -62,7 +62,7 @@ with base_purchase as (
         
         -- Degenerate dimensions
         bp.revision_number,
-        bp.status,
+        bp.order_status,
         
         -- Measures - Line level
         bp.order_qty,
@@ -98,7 +98,7 @@ with base_purchase as (
 , final as (
     select
         -- Primary key
-        {{ dbt_utils.generate_surrogate_key(['purchase_order_detail_id']) }} as adventureworks_purchase_pk,
+        {{ dbt_utils.generate_surrogate_key(['purchase_order_id', 'purchase_order_detail_id']) }} as adventureworks_purchase_pk,
         
         *
     from joined

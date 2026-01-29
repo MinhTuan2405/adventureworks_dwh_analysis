@@ -36,7 +36,8 @@ with product as (
         
         -- Flags
         p.is_manufactured_in_house,
-        p.is_finished_good,
+        p.is_finished_good,                     -- is it the finished product
+        -- mean that if this flag is 0 -> is not for sales, only for manufactoring
         
         -- Product attributes
         nullif(trim(p.color), '')               as color,
