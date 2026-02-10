@@ -24,18 +24,29 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   adventureworks:
 
-    # Cấu hình chung
+    # Cấu hình chung cho tất cả models
     +materialized: external
     +format: parquet
-
+    
+    # Common dimensions (shared across all sources)
+    common:
+      +schema: "common"
+    
+    # Source layer - raw data from source systems
     source:
       adventureworks:
         +schema: "bronze"
     
+    # Staging layer - cleaned and standardized
     stage:
       adventureworks:
         +schema: "silver"
     
-    common:
+    # Common mapping tables
+    common_mapping:
       adventureworks:
-        +schema: "adventureworks_dwh"
+        +schema: "mapping"
+    
+    # Final dimensional models for AdventureWorks
+    common_adventureworks:
+      +schema: "adventureworks_dwh"
