@@ -28,6 +28,14 @@ with base as (
         -- Attributes
         trim(vendor_name) as vendor_name,
         credit_rating,
+        case 
+            when credit_rating = 1 then 'Superior'
+            when credit_rating = 2 then 'Excellent'
+            when credit_rating = 3 then 'Above Average'
+            when credit_rating = 4 then 'Average'
+            when credit_rating = 5 then 'Below Average'
+          else 'Unknown'
+        end as credit_rating_desc,
         is_preferred_vendor,
         is_active
     from base

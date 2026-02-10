@@ -110,3 +110,12 @@ sources:
       - name: vendor
         meta:
           external_location: "read_parquet('s3://lakehouse/landing/purchasing/purchasing_vendor.parquet')"
+
+      - name: product_inventory
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/production/production_productinventory.parquet')"
+
+      - name: product_location
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/production/production_location.parquet')"
+

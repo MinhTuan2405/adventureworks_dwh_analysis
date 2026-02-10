@@ -68,6 +68,15 @@ with base_purchase_header as (
             nullif(stocked_qty, 0),
             received_qty - rejected_qty
         )           as stocked_qty,
+
+        rejected_qty * unit_price as rejected_amount,
+        case 
+            when received_qty >= order_qty then 'Fully Received'
+            when received_qty > 0 and received_qty < order_qty then 'Partially Received'
+            when received_qty = 0 then 'Not Received'
+            else 'Over Received'
+        end as line_item_status
+
         
     from base_purchase_details
 )
@@ -98,12 +107,48 @@ with base_purchase_header as (
         c.received_qty,
         c.rejected_qty,
         c.stocked_qty,
+        c.rejected_amount,
+        c.line_item_status
 
     from cleaned_header h
     left join cleaned_details c
         on h.purchase_order_id = c.purchase_order_id
 
+),
+
+recaculate_subtotal as (
+    select 
+        *,
+        SUM(line_total) OVER (PARTITION BY purchase_order_id) AS sub_total_calculate
+    from joined
 )
 
-select *
-from joined
+select
+
+    -- header
+    purchase_order_id,
+    revision_number,
+    order_status,
+    employee_id,
+    vendor_id,
+    ship_method_id,
+    order_date,
+    ship_date,
+    sub_total_calculate as sub_total,
+    tax_amt,
+    freight,
+    total_due,
+    -- detail
+    purchase_order_detail_id,
+    due_date,
+    order_qty,
+    product_id,
+    unit_price,
+    line_total,
+    received_qty,
+    rejected_qty,
+    stocked_qty,
+    rejected_amount,
+    line_item_status
+
+from recaculate_subtotal

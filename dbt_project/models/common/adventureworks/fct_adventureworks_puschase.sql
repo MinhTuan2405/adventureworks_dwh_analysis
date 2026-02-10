@@ -7,7 +7,7 @@
   ) 
 }}
 
-with base_purchase as (
+with stg_purchase as (
     select *
     from {{ ref('stg_adventureworks_purchase')}}
 )
@@ -71,6 +71,9 @@ with base_purchase as (
         bp.received_qty,
         bp.rejected_qty,
         bp.stocked_qty,
+        bp.rejected_amount,
+        bp.line_item_status,
+
         
         -- Measures - Order level
         bp.sub_total as order_sub_total,
@@ -78,7 +81,7 @@ with base_purchase as (
         bp.freight as order_freight_amount,
         bp.total_due as order_total_due
         
-    from base_purchase bp
+    from stg_purchase bp
     left join stg_vendor dv
         on bp.vendor_id = dv.vendor_id
     left join stg_product dp

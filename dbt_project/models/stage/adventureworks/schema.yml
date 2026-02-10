@@ -141,3 +141,36 @@ models:
         description: "Date order was placed"
         tests:
           - not_null
+      - name: total_due
+        description: "Total amount due for the purchase order"
+        tests:
+          - not_null
+      - name: stocked_qty # > 0
+        description: "Quantity of product stocked"
+        tests:
+          - not_null
+          # - expression_is_true:
+          #     expression: "stocked_qty > 0"
+
+  - name: stg_adventureworks_inventory
+    description: "Staging table for product inventory"
+    columns:
+      - name: product_id
+        description: "Product identifier"
+        tests:
+          - not_null
+      - name: location_id
+        description: "Location identifier"
+        tests:
+          - not_null
+    
+  - name: stg_adventureworks_location
+    description: "Staging table for locations"
+    columns:
+      - name: location_id
+        description: "Primary key for locations"
+        tests:
+          - unique
+          - not_null
+
+
