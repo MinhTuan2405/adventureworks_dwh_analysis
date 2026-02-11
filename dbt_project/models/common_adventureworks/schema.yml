@@ -1,6 +1,15 @@
 version: 2
 
 models:
+  # Date Dimension
+  - name: dim_date
+    description: "Date dimension table with calendar attributes"
+    columns:
+      - name: date_key
+        description: "Primary key in YYYYMMDD integer format"
+        tests:
+          - unique
+          - not_null
 
   # Customer Dimensions
   - name: dim_adventureworks_internet_customer

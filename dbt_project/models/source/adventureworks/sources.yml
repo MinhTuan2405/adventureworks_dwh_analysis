@@ -119,3 +119,11 @@ sources:
         meta:
           external_location: "read_parquet('s3://lakehouse/landing/production/production_location.parquet')"
 
+      - name: product_transaction
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/production/production_transactionhistory.parquet')"
+
+      - name: product_transaction_archive
+        meta:
+          external_location: "read_parquet('s3://lakehouse/landing/production/production_transactionhistoryarchive.parquet')"
+
