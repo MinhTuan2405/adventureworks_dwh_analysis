@@ -48,6 +48,6 @@ models:
       adventureworks:
         +schema: "mapping"
     
-    # Final dimensional models for AdventureWorks
+    # Warehouse layer
     common_adventureworks:
       +schema: "adventureworks_dwh"

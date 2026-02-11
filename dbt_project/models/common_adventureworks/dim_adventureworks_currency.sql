@@ -3,7 +3,7 @@
     materialized = 'external',
     file_format = 'parquet',
     tags = ['adventureworks', 'dwh', 'dimension'],
-    location = 's3://lakehouse/gold/adventureworks/dim_adventureworks_currency.parquet'
+    location = 's3://lakehouse/warehouse/adventureworks/dim_adventureworks_currency.parquet'
   ) 
 }}
 
