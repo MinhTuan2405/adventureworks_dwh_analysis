@@ -72,7 +72,6 @@ with sales as (
         -- Dimension foreign keys (surrogate keys)
         coalesce(dc.dim_adventureworks_internet_customer_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_internet_customer_sk,
         coalesce(dp.dim_adventureworks_product_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_product_sk,
-        coalesce(de.dim_adventureworks_employee_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_employee_sk,
         coalesce(dt.dim_adventureworks_sales_territory_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_sales_territory_sk,
         coalesce(dgb.dim_adventureworks_geography_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_geography_bill_sk,
         coalesce(dgs.dim_adventureworks_geography_sk, {{ dbt_utils.generate_surrogate_key(["'-1'"]) }}) as dim_adventureworks_geography_ship_sk,
