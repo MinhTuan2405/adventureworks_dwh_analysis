@@ -9,7 +9,7 @@
 
 with source as (
     select *
-    from {{ source('adventureworks','address') }}
+    from read_parquet('s3://lakehouse/landing/person/person_address.parquet')
 )
 
 -- RENAME + CASTING
@@ -33,16 +33,16 @@ with source as (
         *,
         cast(
             split_part(
-                replace(replace(spatial_location, 'POINT (', ''), ')', ''),
-                ' ',
+                replace(replace(spatial_location, $$POINT ($$, $$$$), $$)$$, $$$$),
+                $$ $$,
                 1
             ) as {{ dbt.type_float() }}
         )                                           as geo_longitude,
 
         cast(
             split_part(
-                replace(replace(spatial_location, 'POINT (', ''), ')', ''),
-                ' ',
+                replace(replace(spatial_location, $$POINT ($$, $$$$), $$)$$, $$$$),
+                $$ $$,
                 2
             ) as {{ dbt.type_float() }}
         )                                           as geo_latitude

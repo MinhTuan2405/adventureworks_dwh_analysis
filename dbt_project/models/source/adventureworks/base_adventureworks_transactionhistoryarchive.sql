@@ -9,7 +9,7 @@
 
 with source as (
     select *
-    from {{ source('adventureworks', 'product_transaction_archive') }}
+    from read_parquet('s3://lakehouse/landing/production/production_transactionhistoryarchive.parquet')
 ),
 
 renamed_and_casted as (

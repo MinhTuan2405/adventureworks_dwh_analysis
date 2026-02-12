@@ -9,7 +9,7 @@
 
 with source as (
     select *
-    from {{ source('adventureworks', 'product') }}
+    from read_parquet('s3://lakehouse/landing/production/production_product.parquet')
 )
 
 , renaming as (
@@ -36,7 +36,7 @@ with source as (
         cast(ProductModelID as integer)             as product_model_id,
         cast(SellStartDate as timestamp)            as sell_start_date,
         cast(SellEndDate as timestamp)              as sell_end_date,
-        cast(nullif(DiscontinuedDate, 'None') as timestamp) as discontinued_date,
+        cast(nullif(DiscontinuedDate, $$None$$) as timestamp) as discontinued_date,
         cast(rowguid as varchar)                    as row_guid,
         cast(ModifiedDate as timestamp)             as modified_date
     from source

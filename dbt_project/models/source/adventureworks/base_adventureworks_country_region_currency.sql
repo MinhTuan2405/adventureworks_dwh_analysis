@@ -9,7 +9,7 @@
 
 with source as (
     select *
-    from {{ source('adventureworks','country_region_currency') }}
+    from read_parquet('s3://lakehouse/landing/sales/sales_countryregioncurrency.parquet')
 )
 
 

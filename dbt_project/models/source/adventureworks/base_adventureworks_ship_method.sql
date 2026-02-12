@@ -9,7 +9,7 @@
 
 with source as (
     select *
-    from {{ source('adventureworks','ship_method') }}
+    from read_parquet('s3://lakehouse/landing/purchasing/purchasing_shipmethod.parquet')
 )
 
 -- casting + rename

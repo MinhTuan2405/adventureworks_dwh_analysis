@@ -9,7 +9,7 @@
 
 with source as (
     select *
-    from {{ source('adventureworks', 'purchase_order_header') }}
+    from read_parquet('s3://lakehouse/landing/purchasing/purchasing_purchaseorderheader.parquet')
 )
 
 , final as (

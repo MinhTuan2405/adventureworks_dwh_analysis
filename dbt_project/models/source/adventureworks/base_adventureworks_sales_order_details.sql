@@ -9,7 +9,7 @@
 
 with source as (
     select *
-    from {{ source('adventureworks', 'sales_order_details') }}
+    from read_parquet('s3://lakehouse/landing/sales/sales_salesorderdetail.parquet')
 )
 
 , renaming as (
@@ -22,7 +22,7 @@ with source as (
         cast(SpecialOfferID as integer)             as special_offer_id,
         cast(UnitPrice as decimal(19,4))            as unit_price,
         cast(UnitPriceDiscount as decimal(19,4))    as unit_price_discount,
-        cast(nullif(LineTotal, 'None') as decimal(38,4)) as line_total,
+        cast(nullif(LineTotal, $$None$$) as decimal(38,4)) as line_total,
         cast(rowguid as varchar)                    as row_guid,
         cast(ModifiedDate as timestamp)             as modified_date
     from source

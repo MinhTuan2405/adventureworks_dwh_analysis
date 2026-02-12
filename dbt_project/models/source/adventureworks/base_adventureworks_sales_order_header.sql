@@ -9,7 +9,7 @@
 
 with source as (
     select *
-    from {{ source('adventureworks', 'sales_order_header') }}
+    from read_parquet('s3://lakehouse/landing/sales/sales_salesorderheader.parquet')
 )
 
 , renaming as (
@@ -36,7 +36,7 @@ with source as (
         cast(SubTotal as decimal(19,4))             as sub_total,
         cast(TaxAmt as decimal(19,4))               as tax_amount,
         cast(Freight as decimal(19,4))              as freight_amount,
-        cast(nullif(TotalDue, 'None') as decimal(19,4)) as total_due,
+        cast(nullif(TotalDue, $$None$$) as decimal(19,4)) as total_due,
         cast(Comment as varchar)                    as comment,
         cast(rowguid as varchar)                    as row_guid,
         cast(ModifiedDate as timestamp)             as modified_date

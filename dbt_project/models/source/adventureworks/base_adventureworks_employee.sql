@@ -9,7 +9,7 @@
 
 with source as (
     select *
-    from {{ source('adventureworks','employee') }}
+    from read_parquet('s3://lakehouse/landing/humanresources/humanresources_employee.parquet')
 )
 
 , rename as (
@@ -17,7 +17,7 @@ with source as (
         cast(BusinessEntityID as integer)       as employee_id,
         cast(NationalIDNumber as varchar)       as national_id_number,
         cast(OrganizationNode as varchar)       as organization_node,
-        cast(nullif(OrganizationLevel, 'None') as integer) as organization_level,
+        cast(nullif(OrganizationLevel, $$None$$) as integer) as organization_level,
         cast(JobTitle as varchar)               as job_title,
         cast(BirthDate as timestamp)            as birthday,
         cast(MaritalStatus as varchar)          as marital_status,
