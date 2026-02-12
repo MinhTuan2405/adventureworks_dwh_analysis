@@ -3,7 +3,7 @@
     materialized = 'external',
     file_format = 'parquet',
     tags = ['adventureworks', 'staging'],
-    location = 's3://lakehouse/silver/adventureworks/stg_adventureworks_customer_person.parquet'
+    location = 's3://lakehouse/silver/adventureworks/stg_adventureworks_customer.parquet'
   ) 
 }}
 
