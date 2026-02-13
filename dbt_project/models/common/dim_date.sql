@@ -2,8 +2,8 @@
   config(
     materialized = 'external',
     file_format = 'parquet',
-    tags = ['adventureworks', 'dwh', 'dimension'],
-    location = 's3://lakehouse/warehouse/adventureworks/dim_date.parquet'
+    tags = [ 'dwh', 'dimension'],
+    location = 's3://lakehouse/warehouse/dim_date.parquet'
   ) 
 }}
 

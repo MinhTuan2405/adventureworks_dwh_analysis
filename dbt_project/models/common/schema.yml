@@ -1,0 +1,217 @@
+version: 2
+
+models:
+  # Date Dimension
+  - name: dim_date
+    description: "Date dimension table with calendar attributes"
+    columns:
+      - name: date_key
+        description: "Primary key in YYYYMMDD integer format"
+        tests:
+          - unique
+          - not_null
+
+  # Customer Dimension
+  - name: dim_customer
+    description: "Unified customer dimension for both internet and reseller customers"
+    columns:
+      - name: dim_customer_sk
+        description: "Surrogate key for all customers"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+      - name: customer_type
+        description: "Customer type: Internet or Reseller"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Internet', 'Reseller']
+
+  # Product Dimension
+  - name: dim_product
+    description: "Product dimension with category hierarchy"
+    columns:
+      - name: dim_product_sk
+        description: "Surrogate key for products"
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Employee Dimension
+  - name: dim_employee
+    description: "Employee/salesperson dimension"
+    columns:
+      - name: dim_employee_sk
+        description: "Surrogate key for employees"
+        tests:
+          - unique
+          - not_null
+      - name: employee_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Geography Dimension
+  - name: dim_geography
+    description: "Address/location dimension with geographic hierarchy"
+    columns:
+      - name: dim_geography_sk
+        description: "Surrogate key for addresses"
+        tests:
+          - unique
+          - not_null
+      - name: address_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Sales Territory Dimension
+  - name: dim_sales_territory
+    description: "Sales territory dimension with metrics"
+    columns:
+      - name: dim_sales_territory_sk
+        description: "Surrogate key for sales territories"
+        tests:
+          - unique
+          - not_null
+      - name: territory_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Ship Method Dimension
+  - name: dim_ship_method
+    description: "Shipping method dimension"
+    columns:
+      - name: dim_ship_method_sk
+        description: "Surrogate key for ship methods"
+        tests:
+          - unique
+          - not_null
+      - name: ship_method_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Currency Dimension
+  - name: dim_currency
+    description: "Currency rate dimension"
+    columns:
+      - name: dim_currency_sk
+        description: "Surrogate key for currency rates"
+        tests:
+          - unique
+          - not_null
+      - name: currency_rate_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+
+  # Vendor Dimension
+  - name: dim_vendor
+    description: "Vendor dimension for purchasing"
+    columns:
+      - name: dim_vendor_sk
+        description: "Surrogate key for vendors"
+        tests:
+          - unique
+          - not_null
+      - name: vendor_id
+        description: "Natural key from source system"
+        tests:
+          - not_null
+      - name: account_number
+        description: "Vendor account number"
+        tests:
+          - not_null
+
+  # Fact Tables
+  - name: fct_sales
+    description: "Unified sales fact table at line item grain for both internet and reseller sales"
+    columns:
+      - name: sales_pk
+        description: "Primary key for fact table"
+        tests:
+          - unique
+          - not_null
+      - name: sales_order_detail_id
+        description: "Natural key for order line item"
+        tests:
+          - not_null
+      - name: order_date_key
+        description: "Foreign key to dim_date"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+      - name: dim_customer_sk
+        description: "Foreign key to dim_customer"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customer')
+              field: dim_customer_sk
+      - name: dim_product_sk
+        description: "Foreign key to dim_product"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: dim_product_sk
+      - name: sales_channel
+        description: "Sales channel: Internet or Reseller"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Internet', 'Reseller']
+      - name: line_total
+        description: "Line item total amount"
+        tests:
+          - not_null
+
+  - name: fct_purchase
+    description: "Purchase order fact table at line item grain"
+    columns:
+      - name: fct_purchase_pk
+        description: "Primary key for fact table"
+        tests:
+          - unique
+          - not_null
+      - name: purchase_order_detail_id
+        description: "Natural key for purchase order line item"
+        tests:
+          - not_null
+      - name: order_date_key
+        description: "Foreign key to dim_date"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+      - name: dim_vendor_sk
+        description: "Foreign key to dim_vendor"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_vendor')
+              field: dim_vendor_sk
+      - name: dim_product_sk
+        description: "Foreign key to dim_product"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: dim_product_sk
+      - name: line_total
+        description: "Line item total amount"
+        tests:
+          - not_null

@@ -2,11 +2,11 @@
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'adventureworks'
+name: 'erp'
 version: '1.0.0'
 
 # This setting configures which "profile" dbt uses for this project.
-profile: 'adventureworks'
+profile: 'erp'
 # These configurations specify where dbt should look for different types of files.
 # The `model-paths` config, for example, states that models in this project can be
 # found in the "models/" directory. You probably won't need to change these!
@@ -23,31 +23,25 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 
 models:
-  adventureworks:
+  erp:
 
     # Cấu hình chung cho tất cả models
     +materialized: external
     +format: parquet
     
-    # Common dimensions (shared across all sources)
+    # Common 
     common:
       +schema: "common"
     
     # Source layer - raw data from source systems
     source:
-      adventureworks:
-        +schema: "bronze"
+      +schema: "bronze"
     
     # Staging layer - cleaned and standardized
     stage:
-      adventureworks:
-        +schema: "silver"
+      +schema: "silver"
     
     # Common mapping tables
     common_mapping:
-      adventureworks:
-        +schema: "mapping"
+      +schema: "mapping"
     
-    # Warehouse layer
-    common_adventureworks:
-      +schema: "adventureworks_dwh"
