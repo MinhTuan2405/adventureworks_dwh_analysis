@@ -3,7 +3,7 @@
     materialized = 'external',
     file_format = 'parquet',
     tags = [ 'dwh'],
-    location = 's3://lakehouse/warehouse/fct_sales.parquet'
+    location = 's3://lakehouse/warehouse/fct_sale.parquet'
   ) 
 }}
 
