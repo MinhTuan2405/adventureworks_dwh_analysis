@@ -97,7 +97,7 @@ services:
     container_name: adventureworksseaweedfs
     restart: unless-stopped
     # Lệnh này chạy "all-in-one": Master, Volume, Filer và S3 Gateway cùng lúc
-    command: "server -dir=/data -s3 -ip=adventureworksseaweedfs"
+    command: "server -dir=/data -s3 -s3.config=/etc/seaweedfs/s3_config.json -ip=adventureworksseaweedfs"
     ports:
       - "${SEAWEEDFS_MASTER_PORT}:9333"
       - "${SEAWEEDFS_VOLUME_PORT}:8080"
@@ -105,6 +105,7 @@ services:
       - "${SEAWEEDFS_S3_PORT}:8333"
     volumes:
       - seaweedfs_data:/data
+      - ./docker/seaweedfs_s3_config.json:/etc/seaweedfs/s3_config.json:ro
     networks:
       - adventure_work_network
     healthcheck:

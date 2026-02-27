@@ -181,7 +181,7 @@ models:
   - name: fct_purchase
     description: "Purchase order fact table at line item grain"
     columns:
-      - name: fct_purchase_pk
+      - name: purchase_pk
         description: "Primary key for fact table"
         tests:
           - unique

@@ -26,7 +26,7 @@ dim_location as (
 final as (
     select
         -- Surrogate Key
-        {{ dbt_utils.generate_surrogate_key(['i.product_id', 'i.location_id']) }} as fct_inventory_sk,
+        {{ dbt_utils.generate_surrogate_key(['i.product_id', 'i.location_id']) }} as inventory_sk,
         
         -- Foreign Keys
         coalesce(p.dim_product_sk, '-1') as dim_product_sk,

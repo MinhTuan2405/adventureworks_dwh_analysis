@@ -18,7 +18,7 @@ dim_product as (
 
 final as (
     select
-        {{ dbt_utils.generate_surrogate_key(['s.transaction_id']) }} as fct_transaction_sk,
+        {{ dbt_utils.generate_surrogate_key(['s.transaction_id']) }} as transaction_sk,
 
         coalesce(p.dim_product_sk, '-1') as dim_product_sk,
         
