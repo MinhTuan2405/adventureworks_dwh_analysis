@@ -7,18 +7,6 @@
   ) 
 }}
 
-{#
-  Fact table: Work Order Routing (Manufacturing Operations)
-  Grain: One row per work order × product × operation sequence
-  
-  Business questions this supports:
-  - Production bottleneck analysis by location/operation
-  - Actual vs planned cost per operation step
-  - Resource utilization by manufacturing location
-  - Schedule adherence per operation
-  - Throughput time per manufacturing step
-#}
-
 with routing as (
     select * from {{ ref('base_workorder_routing') }}
 )
