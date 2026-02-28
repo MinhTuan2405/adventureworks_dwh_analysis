@@ -1,11 +1,5 @@
 # SCM Dashboard — Business Questions Assessment Report
 
-> **Date**: 2026-02-28  
-> **Dataset**: AdventureWorks DWH (DuckDB + dbt + S3/Parquet)  
-> **Purpose**: Đánh giá tính khả thi của 21 câu hỏi business (7 dashboards × 3 questions) so với data model hiện tại
-
----
-
 ## DATA MODEL INVENTORY
 
 | Fact Table | Grain | Key Measures |
@@ -44,7 +38,7 @@ Cross-cutting lenses:
     ⚠️ #1 Overall SCM    ⚠️ #2 Cost Deep Dive    ✅ #7 Product & Category
 ```
 
-> **Note**: AdventureWorks không có Distribution/Logistics stage riêng biệt (không có carrier performance, shipping SLA, delivery tracking). Chỉ có `ship_method` + `freight` amount — nên merge logistics metrics vào Sales hoặc Overall SCM.
+> **Note**: Dataset không có Distribution/Logistics stage riêng biệt (không có carrier performance, shipping SLA, delivery tracking). Chỉ có `ship_method` + `freight` amount — nên merge logistics metrics vào Sales hoặc Overall SCM.
 
 ---
 
@@ -54,7 +48,7 @@ Cross-cutting lenses:
 
 | # | Business Question | Verdict | Analysis |
 |---|---|---|---|
-| Q1 | How is the overall supply chain performing against current efficiency targets, cost budgets, and historical benchmarks? | ⚠️ Adjust | **"targets" và "budgets" KHÔNG CÓ trong dataset.** AdventureWorks không có bảng budget/target. Chỉ có thể dùng prior period (YoY, MoM) làm benchmark. |
+| Q1 | How is the overall supply chain performing against current efficiency targets, cost budgets, and historical benchmarks? | ⚠️ Adjust | **"targets" và "budgets" KHÔNG CÓ trong dataset.** Dataset không có bảng budget/target. Chỉ có thể dùng prior period (YoY, MoM) làm benchmark. |
 | Q2 | How are the key drivers across the SCM funnel from procurement to fulfillment impacting overall operational efficiency and sales outcomes? | ✅ OK | Funnel traceable qua `product_id`: Purchase → WorkOrder → Inventory → Sale. Đủ data aggregate qua product/date. |
 | Q3 | How do supply chain costs vary by key categories such as cost type, geographic region, facility, or product line? | ⚠️ Adjust | **"Geographic region"** chỉ có cho Sales (`dim_sales_territory`). Purchase/Manufacturing không có region — Purchase chỉ có vendor, Manufacturing chỉ có workcenter. |
 
@@ -125,7 +119,7 @@ Cross-cutting lenses:
 | Q3 | How ready is our inventory to fulfill incoming orders without stockouts? | ✅ OK | `quantity` vs `reorder_point`, `stock_level_status` (Low/Mid/High), items below safety stock. |
 
 **Gaps identified:**
-- Inventory carrying/holding costs không tồn tại trong AdventureWorks
+- Inventory carrying/holding costs không tồn tại trong Dataset
 - Không có forward-looking demand forecast, nhưng có thể đánh giá current readiness
 
 **Recommended revision:**
@@ -176,7 +170,7 @@ Cross-cutting lenses:
 
 ---
 
-## KNOWN DATASET LIMITATIONS (AdventureWorks-wide)
+## KNOWN DATASET LIMITATIONS (Dataset-wide)
 
 | Limitation | Impact | Workaround |
 |---|---|---|
