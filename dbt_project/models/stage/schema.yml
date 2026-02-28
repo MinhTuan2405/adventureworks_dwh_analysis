@@ -164,6 +164,45 @@ models:
         tests:
           - not_null
     
+  - name: stg_manufacture
+    description: "Staging table for manufacturing work orders enriched with scrap reason and routing aggregates"
+    columns:
+      - name: work_order_id
+        description: "Primary key for work orders"
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: "Product being manufactured"
+        tests:
+          - not_null
+      - name: order_qty
+        description: "Quantity ordered for manufacturing"
+        tests:
+          - not_null
+      - name: start_date
+        description: "Manufacturing start date"
+        tests:
+          - not_null
+      - name: due_date
+        description: "Manufacturing due date"
+        tests:
+          - not_null
+      - name: delivery_status
+        description: "On Time, Late, or In Progress"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['On Time', 'Late', 'In Progress']
+      - name: scrap_rate_pct
+        description: "Scrap rate as percentage of order quantity"
+        tests:
+          - not_null
+      - name: yield_rate_pct
+        description: "Yield rate as percentage of order quantity"
+        tests:
+          - not_null
+
   - name: stg_location
     description: "Staging table for locations"
     columns:

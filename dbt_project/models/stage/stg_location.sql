@@ -13,7 +13,7 @@ with source as (
 
 select
     -- Create surrogate key
-    {{ dbt_utils.generate_surrogate_key(['location_id']) }} as dim_location_sk,
+    {{ dbt_utils.generate_surrogate_key(['location_id']) }} as dim_workcenter_sk,
     
     location_id,
     location_name,

@@ -18,9 +18,9 @@ dim_product as (
     from {{ ref('dim_product') }}
 ),
 
-dim_location as (
-    select location_id, dim_location_sk
-    from {{ ref('dim_location') }}
+dim_workcenter as (
+    select location_id, dim_workcenter_sk
+    from {{ ref('dim_workcenter') }}
 ),
 
 final as (
@@ -30,7 +30,7 @@ final as (
         
         -- Foreign Keys
         coalesce(p.dim_product_sk, '-1') as dim_product_sk,
-        coalesce(l.dim_location_sk, '-1') as dim_location_sk,
+        coalesce(l.dim_workcenter_sk, '-1') as dim_workcenter_sk,
 
         -- Business Keys
         i.product_id,
@@ -71,7 +71,7 @@ final as (
 
     from stg_inventory i
     left join dim_product p on i.product_id = p.product_id
-    left join dim_location l on i.location_id = l.location_id
+    left join dim_workcenter l on i.location_id = l.location_id
 )
 
 select * from final

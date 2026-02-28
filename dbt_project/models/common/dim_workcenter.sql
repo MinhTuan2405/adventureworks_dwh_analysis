@@ -3,7 +3,7 @@
     materialized = 'external',
     file_format = 'parquet',
     tags = [ 'dwh'],
-    location = 's3://lakehouse/warehouse/dim_location.parquet'
+    location = 's3://lakehouse/warehouse/dim_workcenter.parquet'
   ) 
 }}
 
@@ -14,7 +14,7 @@ with staged as (
 final as (
     select
 
-        {{ dbt_utils.generate_surrogate_key(['location_id']) }} as dim_location_sk,
+        dim_workcenter_sk,
         
         location_id,
         

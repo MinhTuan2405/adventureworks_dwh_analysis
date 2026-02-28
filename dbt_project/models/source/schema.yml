@@ -427,3 +427,98 @@ models:
         description: "Khóa ngoại đến vendor."
         tests:
           - not_null
+
+  # base_scrap_reason model
+  - name: base_scrap_reason
+    description: "Danh mục lý do phế phẩm trong quy trình sản xuất."
+    columns:
+      - name: scrap_reason_id
+        description: "Khóa chính của bảng scrap reason."
+        tests:
+          - unique
+          - not_null
+      - name: scrap_reason_name
+        description: "Tên lý do phế phẩm."
+        tests:
+          - not_null
+      - name: modified_date
+        description: "Ngày chỉnh sửa bản ghi."
+        tests:
+          - not_null
+
+  # base_workorder model
+  - name: base_workorder
+    description: "Lệnh sản xuất (work order) bao gồm số lượng đặt, số lượng tồn kho, phế phẩm và thời gian sản xuất."
+    columns:
+      - name: work_order_id
+        description: "Khóa chính của bảng work order."
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: "Khóa ngoại đến product."
+        tests:
+          - not_null
+      - name: order_qty
+        description: "Số lượng sản phẩm cần sản xuất."
+        tests:
+          - not_null
+      - name: scrapped_qty
+        description: "Số lượng phế phẩm."
+        tests:
+          - not_null
+      - name: start_date
+        description: "Ngày bắt đầu sản xuất."
+        tests:
+          - not_null
+      - name: due_date
+        description: "Ngày dự kiến hoàn thành."
+        tests:
+          - not_null
+      - name: scrap_reason_id
+        description: "Khóa ngoại đến scrap reason (nullable, chỉ có khi có phế phẩm)."
+
+  # base_workorder_routing model
+  - name: base_workorder_routing
+    description: "Chi tiết định tuyến sản xuất theo từng công đoạn của work order, bao gồm địa điểm, thời gian và chi phí."
+    columns:
+      - name: work_order_id
+        description: "Khóa ngoại đến work order."
+        tests:
+          - not_null
+      - name: product_id
+        description: "Khóa ngoại đến product."
+        tests:
+          - not_null
+      - name: operation_sequence
+        description: "Thứ tự công đoạn sản xuất."
+        tests:
+          - not_null
+      - name: location_id
+        description: "Khóa ngoại đến location (địa điểm sản xuất)."
+        tests:
+          - not_null
+      - name: scheduled_start_date
+        description: "Ngày bắt đầu theo kế hoạch."
+        tests:
+          - not_null
+      - name: scheduled_end_date
+        description: "Ngày kết thúc theo kế hoạch."
+        tests:
+          - not_null
+      - name: actual_start_date
+        description: "Ngày bắt đầu thực tế (nullable)."
+      - name: actual_end_date
+        description: "Ngày kết thúc thực tế (nullable)."
+      - name: actual_resource_hrs
+        description: "Số giờ tài nguyên thực tế sử dụng (nullable)."
+      - name: planned_cost
+        description: "Chi phí dự kiến."
+        tests:
+          - not_null
+      - name: actual_cost
+        description: "Chi phí thực tế (nullable)."
+      - name: modified_date
+        description: "Ngày chỉnh sửa bản ghi."
+        tests:
+          - not_null

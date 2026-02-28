@@ -101,6 +101,25 @@ models:
         tests:
           - not_null
 
+  # Workshop Dimension (Manufacturing Location)
+  - name: dim_workcenter
+    description: "Work center dimension representing production areas and workstations within the factory"
+    columns:
+      - name: dim_workcenter_sk
+        description: "Surrogate key for manufacturing work centers"
+        tests:
+          - unique
+          - not_null
+      - name: location_id
+        description: "Natural key from source system"
+        tests:
+          - unique
+          - not_null
+      - name: location_name
+        description: "Name of the manufacturing workshop/location"
+        tests:
+          - not_null
+
   # Currency Dimension
   - name: dim_currency
     description: "Currency rate dimension"
@@ -215,3 +234,113 @@ models:
         description: "Line item total amount"
         tests:
           - not_null
+  # Scrap Reason Dimension
+  - name: dim_scrap_reason
+    description: "Scrap reason dimension for manufacturing defect analysis"
+    columns:
+      - name: dim_scrap_reason_sk
+        description: "Surrogate key for scrap reasons"
+        tests:
+          - unique
+          - not_null
+      - name: scrap_reason_id
+        description: "Natural key from source system"
+        tests:
+          - unique
+          - not_null
+      - name: scrap_reason_name
+        description: "Name of the scrap reason"
+        tests:
+          - not_null
+      - name: scrap_category
+        description: "Derived category grouping scrap reasons"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Paint/Finish', 'Machining', 'Welding', 'Forming', 'Other']
+
+  # Work Order Fact
+  - name: fct_workorder
+    description: "Work order fact table at work order grain for manufacturing analysis"
+    columns:
+      - name: workorder_pk
+        description: "Primary key for fact table"
+        tests:
+          - unique
+          - not_null
+      - name: work_order_id
+        description: "Natural key for work order"
+        tests:
+          - not_null
+      - name: start_date_key
+        description: "Foreign key to dim_date for start date"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+      - name: dim_product_sk
+        description: "Foreign key to dim_product"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: dim_product_sk
+      - name: order_qty
+        description: "Quantity ordered for manufacturing"
+        tests:
+          - not_null
+      - name: scrap_rate_pct
+        description: "Scrap rate percentage"
+        tests:
+          - not_null
+      - name: yield_rate_pct
+        description: "Yield rate percentage"
+        tests:
+          - not_null
+      - name: delivery_status
+        description: "On Time, Late, or In Progress"
+        tests:
+          - not_null
+
+  # Work Order Routing Fact
+  - name: fct_workorder_routing
+    description: "Work order routing fact table at operation step grain for manufacturing operations analysis"
+    columns:
+      - name: workorder_routing_pk
+        description: "Primary key for fact table (composite surrogate)"
+        tests:
+          - unique
+          - not_null
+      - name: work_order_id
+        description: "Work order identifier"
+        tests:
+          - not_null
+      - name: operation_sequence
+        description: "Operation sequence number within work order"
+        tests:
+          - not_null
+      - name: dim_product_sk
+        description: "Foreign key to dim_product"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: dim_product_sk
+      - name: dim_workcenter_sk
+        description: "Foreign key to dim_workcenter (manufacturing work center)"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_workcenter')
+              field: dim_workcenter_sk
+      - name: planned_cost
+        description: "Planned cost for this operation step"
+        tests:
+          - not_null
+      - name: schedule_status
+        description: "Schedule adherence status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Not Started', 'In Progress', 'On Schedule', 'Behind Schedule']
