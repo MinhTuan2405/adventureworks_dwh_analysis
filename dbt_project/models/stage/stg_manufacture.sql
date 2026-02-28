@@ -69,7 +69,7 @@ with work_order as (
         -- Yield rate
         case 
             when wo.order_qty > 0 
-            then round(wo.stocked_qty * 100.0 / wo.order_qty, 2)
+            then round(coalesce(wo.stocked_qty, 0) * 100.0 / wo.order_qty, 2)
             else 0 
         end                                             as yield_rate_pct,
         
